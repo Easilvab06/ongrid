@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+
+:root {
+  --soinsolar-orange: #F5B027;
+  --soinsolar-orange-dark: #E89B1C;
+  --soinsolar-blue: #0ea5e9;
+  --soinsolar-blue-dark: #0284c7;
+  --bg-dark: #1f2c51;
+  --bg-darker: #151d33;
+  --card: rgba(30, 41, 59, 0.7);
+  --card-hover: rgba(30, 41, 59, 0.9);
+  --text: #f8fafc;
+  --text-muted: #cbd5e1;
+  --border: rgba(148, 163, 184, 0.2);
+  --shadow-orange: rgba(245, 176, 39, 0.6);
+  --shadow-blue: rgba(14, 165, 233, 0.5);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #1f2c51 0%, #0f1829 50%, #1a2340 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+/* Efecto de fondo animado con bolas */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 15% 25%, rgba(245, 176, 39, 0.25) 0%, transparent 25%),
+    radial-gradient(circle at 85% 75%, rgba(245, 176, 39, 0.2) 0%, transparent 30%),
+    radial-gradient(circle at 50% 50%, rgba(245, 176, 39, 0.15) 0%, transparent 40%);
+  animation: floatBackground 25s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes floatBackground {
+  0%, 100% { 
+    transform: translate(0, 0) scale(1);
+  }
+  25% { 
+    transform: translate(40px, -50px) scale(1.05);
+  }
+  50% { 
+    transform: translate(-30px, 30px) scale(0.95);
+  }
+  75% { 
+    transform: translate(-50px, -40px) scale(1.08);
+  }
+}
+
+/* Animaciones globales */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { 
+    background-position: -1000px 0;
+  }
+  100% { 
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 20px var(--shadow-orange)); 
+  }
+  50% { 
+    filter: drop-shadow(0 0 40px var(--shadow-orange)); 
+  }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px);
+  }
+  50% { 
+    transform: translateY(-10px);
+  }
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--soinsolar-orange), var(--soinsolar-blue));
+  border-radius: 10px;
+  border: 2px solid var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--soinsolar-orange-dark), var(--soinsolar-blue-dark));
+}

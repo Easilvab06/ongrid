@@ -1,0 +1,549 @@
+<template>
+  <div class="panel-container">
+    <!-- Header con flecha animada -->
+    <div class="panel-header" @click="toggleExpand">
+      <div class="header-content">
+        <h2 class="panel-title">¿Qué incluye tu sistema solar?</h2>
+        <p class="panel-subtitle">Descubre cada elemento que hace posible tu energía limpia</p>
+      </div>
+      <div class="arrow-wrapper" :class="{ expanded: isExpanded }">
+        <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Contenedor de componentes expandibles -->
+    <transition name="expand-height">
+      <div v-if="isExpanded" class="components-container">
+        <!-- Grid de componentes con efecto staggered -->
+        <div 
+          v-for="(component, index) in components" 
+          :key="index"
+          class="component-card"
+          :style="{ '--delay': `${index * 100}ms` }"
+          @mouseenter="hoveredComponent = index"
+          @mouseleave="hoveredComponent = null"
+        >
+          <!-- Burbuja gris con icono en superior derecha -->
+          <div class="icon-bubble">{{ component.icon }}</div>
+
+          <!-- Animación de fondo -->
+          <div class="card-background">
+            <div class="gradient-blob blob-1"></div>
+            <div class="gradient-blob blob-2"></div>
+          </div>
+
+          <!-- Contenido del componente -->
+          <div class="card-content">
+            <!-- Número circular animado -->
+            <div class="component-number">
+              <span class="number-text">{{ index + 1 }}</span>
+              <svg class="circle-svg" viewBox="0 0 100 100">
+                <circle class="circle-background" cx="50" cy="50" r="45"/>
+                <circle class="circle-progress" cx="50" cy="50" r="45"/>
+              </svg>
+            </div>
+
+            <!-- Icono y texto -->
+            <div class="card-text">
+              <h3 class="component-name">{{ component.name }}</h3>
+              <p class="component-description">{{ component.description }}</p>
+            </div>
+          </div>
+
+          <!-- Línea decorativa animada -->
+          <div class="card-line"></div>
+        </div>
+      </div>
+    </transition>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Panel4',
+  data() {
+    return {
+      isExpanded: false,
+      hoveredComponent: null,
+      components: [
+        {
+          name: 'Inversores Solares',
+          description: 'Convierten la energía DC en AC para alimentar tu hogar',
+          icon: '⚡'
+        },
+        {
+          name: 'Estructura en Aluminio',
+          description: 'Soporte resistente y duradero para tus paneles',
+          icon: '🏗️'
+        },
+        {
+          name: 'Medidor Bidireccional',
+          description: 'Monitorea el flujo de energía en ambas direcciones',
+          icon: '📊'
+        },
+        {
+          name: 'Protecciones, Cableado y Tubería',
+          description: 'Seguridad eléctrica y circulación óptima de energía',
+          icon: '🔒'
+        },
+        {
+          name: 'Diseño, Retie y Legalización',
+          description: 'Trámites y documentación completamente gestionados',
+          icon: '📋'
+        },
+        {
+          name: 'Capacitación y Monitoreo',
+          description: 'Aprende a usar tu sistema y mantén el control total',
+          icon: '🎓'
+        }
+      ]
+    };
+  },
+  methods: {
+    toggleExpand() {
+      this.isExpanded = !this.isExpanded;
+    }
+  }
+};
+</script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.panel-container {
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  grid-column: span 2;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* HEADER SECTION */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 40px;
+  background: linear-gradient(135deg, #F5B027 0%, #E89B1C 100%);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.panel-header:hover::before {
+  left: 100%;
+}
+
+.panel-header:hover {
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.5);
+}
+
+.header-content {
+  flex: 1;
+  text-align: center;
+}
+
+.panel-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.5px;
+  animation: fadeInLeft 0.6s ease-out;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.panel-subtitle {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: rgba(26, 26, 26, 0.7);
+  animation: fadeInLeft 0.6s ease-out 0.1s both;
+  font-family: 'Montserrat', sans-serif;
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ARROW */
+.arrow-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  margin-left: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  position: absolute;
+  right: 30px;
+}
+
+.arrow-wrapper:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.1);
+}
+
+.arrow-wrapper.expanded {
+  background: rgba(26, 26, 26, 0.15);
+}
+
+.arrow-icon {
+  width: 28px;
+  height: 28px;
+  color: #1a1a1a;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.arrow-wrapper.expanded .arrow-icon {
+  transform: rotate(180deg);
+}
+
+/* COMPONENTS CONTAINER */
+.components-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 40px;
+  background: linear-gradient(180deg, rgba(31, 44, 81, 0.1) 0%, rgba(26, 35, 64, 0.1) 100%);
+}
+
+/* COMPONENT CARDS */
+.component-card {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  overflow: visible;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: scaleInCard 0.5s ease-out;
+  animation-delay: var(--delay);
+  animation-fill-mode: both;
+  border: 2px solid transparent;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes scaleInCard {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.component-card:hover {
+  transform: translateY(-8px);
+  border-color: #1f2c51;
+  box-shadow: 0 20px 50px rgba(31, 44, 81, 0.3);
+}
+
+/* ICON BUBBLE - SUPERIOR DERECHA */
+.icon-bubble {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #e0e7ff, #f3f4f6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.component-card:hover .icon-bubble {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.gradient-blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.blob-1 {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #1f2c51, #2d3f6e);
+  top: -20px;
+  right: -20px;
+}
+
+.blob-2 {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #1a2340, #1f2c51);
+  bottom: -30px;
+  left: -30px;
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(10px, -10px);
+  }
+}
+
+.component-card:hover .gradient-blob {
+  opacity: 0.2;
+}
+
+/* CARD CONTENT */
+.card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.component-number {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.number-text {
+  position: relative;
+  z-index: 2;
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1f2c51, #1a2340);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.circle-svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  top: 0;
+  left: 0;
+}
+
+.circle-background {
+  fill: none;
+  stroke: #f0f0f0;
+  stroke-width: 2;
+}
+
+.circle-progress {
+  fill: none;
+  stroke: #1f2c51;
+  stroke-width: 2;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  transition: stroke-dashoffset 0.6s ease-out;
+  animation: fillCircle 1s ease-out forwards;
+  animation-delay: var(--delay);
+}
+
+@keyframes fillCircle {
+  from {
+    stroke-dashoffset: 283;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.component-card:hover .circle-progress {
+  stroke-dashoffset: 0;
+  filter: drop-shadow(0 0 8px rgba(31, 44, 81, 0.6));
+}
+
+.card-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.component-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  transition: color 0.3s;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.component-card:hover .component-name {
+  color: #1f2c51;
+}
+
+.component-description {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(26, 26, 26, 0.6);
+  line-height: 1.5;
+  transition: color 0.3s;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.component-card:hover .component-description {
+  color: rgba(26, 26, 26, 0.8);
+}
+
+/* DECORATIVE LINE */
+.card-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #1f2c51, #1a2340, transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.component-card:hover .card-line {
+  opacity: 1;
+  animation: slideLineAnimation 0.6s ease-out;
+}
+
+@keyframes slideLineAnimation {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* TRANSITIONS */
+.expand-height-enter-active,
+.expand-height-leave-active {
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top center;
+}
+
+.expand-height-enter-from,
+.expand-height-leave-to {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: perspective(600px) rotateX(90deg);
+}
+
+.expand-height-enter-to,
+.expand-height-leave-from {
+  opacity: 1;
+  max-height: 1000px;
+  transform: perspective(600px) rotateX(0deg);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .panel-header {
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+
+  .panel-title {
+    font-size: 18px;
+  }
+
+  .panel-subtitle {
+    font-size: 12px;
+  }
+
+  .components-container {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .component-card {
+    padding: 16px;
+  }
+
+  .component-number {
+    width: 50px;
+    height: 50px;
+  }
+
+  .number-text {
+    font-size: 18px;
+  }
+
+  .icon-bubble {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+    top: -12px;
+    right: -12px;
+  }
+}
+</style>
