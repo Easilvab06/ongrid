@@ -476,15 +476,44 @@ const exportToExcel = async () => {
 
   try {
     // Obtener todos los registros del store
-    const registros = cotizacionStore.obtenerRegistros()
+    const registrosGuardados = cotizacionStore.obtenerRegistros()
 
-    if (registros.length === 0) {
+    // Crear lista completa de registros incluyendo el formulario actual
+    let todosLosRegistros = [...registrosGuardados]
+
+    // Verificar si hay datos en el formulario actual y agregarlos
+    const formularioActual = formData.value
+    const tieneDatosBasicos = formularioActual.name && formularioActual.email && formularioActual.phone
+
+    if (tieneDatosBasicos) {
+      // Crear registro temporal del formulario actual
+      const registroActual = {
+        id: 'FORMULARIO_ACTUAL',
+        fecha: new Date().toISOString(),
+        name: formularioActual.name,
+        email: formularioActual.email,
+        phone: formularioActual.phone,
+        city: formularioActual.city,
+        consumo: formularioActual.consumo,
+        factura: formularioActual.factura,
+        tipoInmueble: formularioActual.tipoInmueble,
+        tipoTecho: formularioActual.tipoTecho,
+        area: formularioActual.area,
+        politica: formularioActual.politica,
+        contacto: formularioActual.contacto
+      }
+
+      // Agregar al inicio de la lista
+      todosLosRegistros.unshift(registroActual)
+    }
+
+    if (todosLosRegistros.length === 0) {
       alert('❌ No hay registros para exportar. Complete al menos un formulario primero.')
       return
     }
 
     // Crear datos para Excel
-    const data = registros.map(registro => ({
+    const data = todosLosRegistros.map(registro => ({
       'ID': registro.id,
       'Nombre': registro.name,
       'Email': registro.email,
@@ -497,8 +526,8 @@ const exportToExcel = async () => {
       'Área disponible (m²)': registro.area,
       'Política de datos': registro.politica ? 'Sí' : 'No',
       'Autorización de contacto': registro.contacto ? 'Sí' : 'No',
-      'Fecha de solicitud': new Date(registro.fecha).toLocaleDateString('es-CO'),
-      'Hora de solicitud': new Date(registro.fecha).toLocaleTimeString('es-CO')
+      'Fecha de solicitud': registro.id === 'FORMULARIO_ACTUAL' ? 'FORMULARIO ACTUAL' : new Date(registro.fecha).toLocaleDateString('es-CO'),
+      'Hora de solicitud': registro.id === 'FORMULARIO_ACTUAL' ? new Date().toLocaleTimeString('es-CO') : new Date(registro.fecha).toLocaleTimeString('es-CO')
     }))
 
     // Crear libro de Excel
@@ -510,7 +539,11 @@ const exportToExcel = async () => {
     const fileName = `cotizaciones_solar_todas_${new Date().toISOString().split('T')[0]}.xlsx`
     XLSX.writeFile(wb, fileName)
 
-    alert(`✅ Archivo Excel exportado exitosamente! Se exportaron ${registros.length} registros.`)
+    const mensajeExito = tieneDatosBasicos
+      ? `✅ Archivo Excel exportado exitosamente! Se exportaron ${todosLosRegistros.length} registros (incluyendo el formulario actual).`
+      : `✅ Archivo Excel exportado exitosamente! Se exportaron ${todosLosRegistros.length} registros.`
+
+    alert(mensajeExito)
   } catch (error) {
     console.error('Error al exportar Excel:', error)
     alert('❌ Error al exportar el archivo Excel. Inténtalo de nuevo.')
@@ -521,8 +554,6 @@ const exportToExcel = async () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
 
 /* Estilos para vista previa de imagen y PDF */
 .image-preview-container {
