@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-gradient-to-br from-white via-white to-orange-50/30 backdrop-blur-xl rounded-3xl p-12 shadow-2xl shadow-orange-500/10 border border-orange-200/20 hover:shadow-3xl hover:shadow-orange-500/20 hover:-translate-y-2 transition-all duration-500 ease-out animate-slideInUp min-h-[500px] h-full flex flex-col justify-center grid-cols-2 font-montserrat relative overflow-hidden">
-    <div class="relative z-10 grid grid-cols-[300px_1fr] gap-12 items-center">
+  <div class="panel1">
+    <div class="relative z-10 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-12 items-center">
       <!-- Animación interactiva de energía circular -->
-      <div class="energy-visualization">
-        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+      <div class="energy-visualization mx-auto lg:mx-0">
+        <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" class="w-64 h-64">
           <defs>
             <linearGradient id="energyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
@@ -18,20 +18,13 @@
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
-            
-            <clipPath id="circle-clip">
-              <circle cx="140" cy="140" r="100"/>
-            </clipPath>
           </defs>
           
           <!-- Círculos de energía concéntricos -->
           <g class="energy-rings">
-            <circle cx="140" cy="140" r="110" fill="none" stroke="url(#energyGradient)" 
-                    stroke-width="2" opacity="0.3" class="ring ring1"/>
-            <circle cx="140" cy="140" r="95" fill="none" stroke="url(#energyGradient)" 
-                    stroke-width="2" opacity="0.4" class="ring ring2"/>
-            <circle cx="140" cy="140" r="80" fill="none" stroke="url(#energyGradient)" 
-                    stroke-width="2" opacity="0.5" class="ring ring3"/>
+            <circle cx="140" cy="140" r="110" fill="none" stroke="url(#energyGradient)" stroke-width="2" opacity="0.3" class="ring ring1"/>
+            <circle cx="140" cy="140" r="95" fill="none" stroke="url(#energyGradient)" stroke-width="2" opacity="0.4" class="ring ring2"/>
+            <circle cx="140" cy="140" r="80" fill="none" stroke="url(#energyGradient)" stroke-width="2" opacity="0.5" class="ring ring3"/>
           </g>
           
           <!-- Partículas orbitando -->
@@ -69,8 +62,7 @@
           
           <!-- Ícono de energía limpia -->
           <g transform="translate(140, 140)">
-            <path d="M-8,-20 L-3,0 L-10,0 L5,20 L0,0 L7,0 Z" 
-                  fill="url(#energyGradient)" class="energy-icon"/>
+            <path d="M-8,-20 L-3,0 L-10,0 L5,20 L0,0 L7,0 Z" fill="url(#energyGradient)" class="energy-icon"/>
             <!-- Hojas de energía limpia -->
             <path d="M-15,-5 Q-20,-10 -18,-15 Q-15,-12 -15,-5" fill="#10b981" opacity="0.8" class="leaf leaf1"/>
             <path d="M15,-5 Q20,-10 18,-15 Q15,-12 15,-5" fill="#10b981" opacity="0.8" class="leaf leaf2"/>
@@ -78,12 +70,9 @@
           
           <!-- Ondas de energía expansivas -->
           <g class="energy-waves">
-            <circle cx="140" cy="140" r="50" fill="none" stroke="#10b981" 
-                    stroke-width="2" opacity="0" class="wave w1"/>
-            <circle cx="140" cy="140" r="50" fill="none" stroke="#3b82f6" 
-                    stroke-width="2" opacity="0" class="wave w2"/>
-            <circle cx="140" cy="140" r="50" fill="none" stroke="#8b5cf6" 
-                    stroke-width="2" opacity="0" class="wave w3"/>
+            <circle cx="140" cy="140" r="50" fill="none" stroke="#10b981" stroke-width="2" opacity="0" class="wave w1"/>
+            <circle cx="140" cy="140" r="50" fill="none" stroke="#3b82f6" stroke-width="2" opacity="0" class="wave w2"/>
+            <circle cx="140" cy="140" r="50" fill="none" stroke="#8b5cf6" stroke-width="2" opacity="0" class="wave w3"/>
           </g>
         </svg>
       </div>
@@ -92,7 +81,7 @@
       <div class="welcome-content">
         <div class="greeting-section">
           <h2 class="greeting-text">Bienvenido,</h2>
-          <div class="name-display" v-if="!isEditing" @click="startEditing">
+          <div v-if="!isEditing" class="name-display" @click="startEditing">
             <span class="user-name">{{ displayName }}</span>
             <span class="edit-hint">✏️</span>
           </div>
@@ -149,7 +138,7 @@ const nameInput = ref(null)
 
 // Estadísticas animadas
 const animatedProjects = ref(0)
-const animatedMW = ref(0)
+const animatedMW = ref('0.00')
 const animatedCoverage = ref(0)
 
 // Nombre a mostrar
@@ -168,10 +157,6 @@ const startEditing = () => {
 // Función para detener edición
 const stopEditing = () => {
   isEditing.value = false
-  // Aquí podrías guardar en localStorage o enviar al backend
-  if (userName.value) {
-    localStorage.setItem('soinsolar_username', userName.value)
-  }
 }
 
 // Animar números al cargar
@@ -186,161 +171,267 @@ const animateNumber = (target, duration, callback) => {
       current = target
       clearInterval(timer)
     }
-    callback(Math.floor(current))
+    callback(current)
   }, 16)
 }
 
 // Cargar datos al montar
 onMounted(() => {
-  // Cargar nombre desde localStorage
-  const savedName = localStorage.getItem('soinsolar_username')
-  if (savedName) {
-    userName.value = savedName
-  }
-  
   // Animar estadísticas
   setTimeout(() => {
-    animateNumber(350, 2000, (val) => { animatedProjects.value = val })
-    animateNumber(7.50, 2000, (val) => { animatedMW.value = val.toFixed(2) })
-    animateNumber(90, 2000, (val) => { animatedCoverage.value = val })
+    animateNumber(350, 2000, (val) => { 
+      animatedProjects.value = Math.floor(val)
+    })
+    animateNumber(7.50, 2000, (val) => { 
+      animatedMW.value = val.toFixed(2)
+    })
+    animateNumber(90, 2000, (val) => { 
+      animatedCoverage.value = Math.floor(val)
+    })
   }, 500)
 })
 </script>
 
 <style scoped>
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Custom animations for energy visualization */
-@layer components {
-  .energy-visualization {
-    @apply w-full max-w-[280px] h-auto;
-  }
+@reference "tailwindcss";
 
-  .energy-visualization svg {
-    @apply w-full h-auto;
-  }
+.panel1 {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  @apply p-0 shadow-lg min-h-[500px] h-full flex flex-col col-span-2 font-['Inter'];
+}
 
-  .ring {
-    stroke-dasharray: 4, 4;
-    animation: rotate-ring 20s linear infinite;
-  }
+.panel-content {
+  @apply h-full flex flex-col;
+}
 
-  .ring1 { animation-duration: 20s; }
-  .ring2 { animation-duration: 15s; animation-direction: reverse; }
-  .ring3 { animation-duration: 25s; }
+.energy-visualization {
+  @apply w-full max-w-64 h-auto;
+}
 
-  .center-orb {
-    animation: pulse-orb 3s ease-in-out infinite;
-  }
+.energy-visualization svg {
+  @apply w-full h-auto block;
+}
 
-  .energy-icon {
-    animation: icon-glow 2s ease-in-out infinite;
-  }
+.ring {
+  stroke-dasharray: 4, 4;
+  animation: rotate-ring 20s linear infinite;
+}
 
-  .leaf {
-    animation: leaf-sway 3s ease-in-out infinite;
-  }
+.ring1 { animation-duration: 20s; }
+.ring2 {
+  animation-duration: 15s;
+  animation-direction: reverse;
+}
+.ring3 { animation-duration: 25s; }
 
-  .leaf1 { animation-delay: 0s; }
-  .leaf2 { animation-delay: 1.5s; }
+.center-orb {
+  animation: pulse-orb 3s ease-in-out infinite;
+}
 
-  .wave {
-    animation: wave-expand 3s ease-out infinite;
-  }
+.energy-icon {
+  animation: icon-glow 2s ease-in-out infinite;
+}
 
-  .w1 { animation-delay: 0s; }
-  .w2 { animation-delay: 1s; }
-  .w3 { animation-delay: 2s; }
+.leaf {
+  animation: leaf-sway 3s ease-in-out infinite;
+}
 
-  .welcome-content {
-    @apply text-left;
-  }
+.leaf1 { animation-delay: 0s; }
+.leaf2 { animation-delay: 1.5s; }
 
-  .greeting-section {
-    @apply mb-6;
-  }
+.wave {
+  animation: wave-expand 3s ease-out infinite;
+}
 
-  .greeting-text {
-    @apply text-5xl font-light text-slate-600 mb-2 -tracking-[0.5px];
-  }
+.w1 { animation-delay: 0s; }
+.w2 { animation-delay: 1s; }
+.w3 { animation-delay: 2s; }
 
-  .name-display {
-    @apply inline-flex items-center gap-3 cursor-pointer py-2 px-4 rounded-xl transition-all duration-300 bg-orange-50/50 hover:bg-orange-100/80 hover:translate-x-1;
-  }
+.welcome-content {
+  text-align: center;
+}
 
-  .user-name {
-    @apply text-6xl font-black bg-gradient-to-br from-orange-500 to-amber-500 bg-clip-text text-transparent -tracking-[1px];
-  }
+.greeting-section {
+  margin-bottom: 24px;
+}
 
-  .edit-hint {
-    @apply text-2xl opacity-50 transition-all duration-300;
-  }
+.greeting-text {
+  font-size: 4rem;
+  font-weight: 300;
+  color: #475569;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
 
-  .name-display:hover .edit-hint {
-    @apply opacity-100 scale-125;
-  }
+.name-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 12px;
+  transition: all 300ms;
+  background-color: rgba(254, 231, 205, 0.5);
+}
 
-  .name-input {
-    @apply text-6xl font-black font-montserrat bg-gradient-to-br from-orange-500 to-amber-500 bg-clip-text text-transparent border-none border-b-4 border-orange-500 outline-none p-2 w-full max-w-[400px] -tracking-[1px];
-  }
+.name-display:hover {
+  background-color: rgba(254, 231, 205, 0.8);
+  transform: translateX(4px);
+}
 
-  .name-input::placeholder {
-    @apply text-orange-400/40;
-  }
+.user-name {
+  font-size: 3.75rem;
+  font-weight: 900;
+  background: linear-gradient(to bottom right, #f97316, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+}
 
-  .impact-message {
-    @apply text-2xl text-slate-700 font-medium mb-10 leading-relaxed;
-  }
+.edit-hint {
+  font-size: 1.5rem;
+  opacity: 0.5;
+  transition: all 300ms;
+}
 
-  .highlight {
-    @apply font-bold text-emerald-600 relative;
-  }
+.name-display:hover .edit-hint {
+  opacity: 1;
+  transform: scale(1.25);
+}
 
-  .highlight::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-600 to-blue-600 rounded-sm;
-  }
+.name-input {
+  font-size: 3.75rem;
+  font-weight: 900;
+  background: linear-gradient(to bottom right, #1f2c51, #f59e0b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border: none;
+  border-bottom: 4px solid #1f2c51;
+  outline: none;
+  padding: 8px;
+  width: 100%;
+  max-width: 400px;
+  letter-spacing: -1px;
+  font-family: Montserrat, sans-serif;
+}
 
-  .stats-grid {
-    @apply grid grid-cols-3 gap-5 mt-8;
-  }
+.name-input::placeholder {
+  color: rgba(249, 115, 22, 0.25);
+}
 
-  .stat-item {
-    @apply text-center p-5 bg-orange-50/50 rounded-2xl transition-all duration-300 border-2 border-orange-200/50 hover:-translate-y-1 hover:bg-orange-100/80 hover:border-orange-300/80 hover:shadow-xl hover:shadow-orange-500/20;
-  }
+.impact-message {
+  font-size: 1.5rem;
+  color: #374151;
+  font-weight: 500;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
 
-  .stat-icon {
-    @apply text-4xl mb-2;
-    animation: icon-bounce 2s ease-in-out infinite;
-  }
+.highlight {
+  font-weight: bold;
+  color: #059669;
+  position: relative;
+  padding-bottom: 4px;
+}
 
-  .stat-item:nth-child(1) .stat-icon { animation-delay: 0s; }
-  .stat-item:nth-child(2) .stat-icon { animation-delay: 0.3s; }
-  .stat-item:nth-child(3) .stat-icon { animation-delay: 0.6s; }
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, #059669, #3b82f6);
+  border-radius: 2px;
+}
 
-  .stat-value {
-    @apply text-4xl font-black bg-gradient-to-br from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-1;
-  }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 32px;
+}
 
-  .stat-label {
-    @apply text-xs text-slate-500 font-semibold uppercase tracking-wider;
-  }
+.stat-item {
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(254, 231, 205, 0.5);
+  border-radius: 16px;
+  transition: all 300ms;
+  border: 2px solid rgba(254, 215, 170, 0.5);
+}
 
-  .panel-glow {
-    @apply absolute -top-1/2 -left-1/2 w-[200%] h-[200%] pointer-events-none;
-    background: radial-gradient(circle at 30% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
-    animation: rotate-glow 25s linear infinite;
-  }
+.stat-item:hover {
+  transform: translateY(-4px);
+  background-color: rgba(254, 231, 205, 0.8);
+  border-color: rgba(254, 215, 170, 0.8);
+  box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.2);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  animation: icon-bounce 2s ease-in-out infinite;
+}
+
+.stat-item:nth-child(1) .stat-icon { animation-delay: 0s; }
+.stat-item:nth-child(2) .stat-icon { animation-delay: 0.3s; }
+.stat-item:nth-child(3) .stat-icon { animation-delay: 0.6s; }
+
+.stat-value {
+  font-size: 1.875rem;
+  font-weight: 900;
+  background: linear-gradient(to bottom right, #059669, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.panel-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  background: radial-gradient(circle at 30% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%);
+  animation: rotate-glow 25s linear infinite;
 }
 
 @keyframes rotate-ring {
-  from { transform: rotate(0deg); transform-origin: 140px 140px; }
-  to { transform: rotate(360deg); transform-origin: 140px 140px; }
+  from {
+    transform: rotate(0deg);
+    transform-origin: 140px 140px;
+  }
+  to {
+    transform: rotate(360deg);
+    transform-origin: 140px 140px;
+  }
 }
 
 @keyframes pulse-orb {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.05); opacity: 1; }
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
 }
 
 @keyframes icon-glow {
@@ -354,8 +445,14 @@ onMounted(() => {
 }
 
 @keyframes wave-expand {
-  0% { r: 50; opacity: 0.8; }
-  100% { r: 120; opacity: 0; }
+  0% {
+    r: 50;
+    opacity: 0.8;
+  }
+  100% {
+    r: 120;
+    opacity: 0;
+  }
 }
 
 @keyframes icon-bounce {
@@ -368,57 +465,54 @@ onMounted(() => {
   to { transform: rotate(360deg); }
 }
 
-@keyframes slideInUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* Responsive design */
-@media (max-width: 1200px) {
-  .panel-content {
-    @apply grid-cols-1 gap-10 text-center;
-  }
-
+@media (max-width: 1024px) {
   .energy-visualization {
-    @apply mx-auto;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .welcome-content {
-    @apply text-center;
+    text-align: center;
   }
 
   .name-display {
-    @apply justify-center;
+    justify-content: center;
   }
 
-  .stats-grid {
-    @apply grid-cols-3;
+  .greeting-text {
+    font-size: 2rem;
+  }
+
+  .user-name {
+    font-size: 2.5rem;
+  }
+
+  .name-input {
+    font-size: 2.5rem;
   }
 }
 
 @media (max-width: 768px) {
-  .panel1 {
-    @apply p-8 min-h-[450px];
-  }
-
   .greeting-text {
-    @apply text-4xl;
+    font-size: 2rem;
   }
 
   .user-name, .name-input {
-    @apply text-5xl;
+    font-size: 2.25rem;
   }
 
   .impact-message {
-    @apply text-xl;
+    font-size: 1.125rem;
   }
 
   .stats-grid {
-    @apply grid-cols-1 gap-4;
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .stat-value {
-    @apply text-3xl;
+    font-size: 1.5rem;
   }
 }
 </style>

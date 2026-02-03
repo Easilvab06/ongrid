@@ -505,10 +505,94 @@ export default {
 }
 
 /* RESPONSIVE */
+@media (max-width: 1200px) {
+  .panel-container {
+    grid-column: span 1;
+  }
+
+  .components-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    padding: 30px;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 992px) {
+  .panel-header {
+    padding: 25px 30px;
+  }
+
+  .panel-title {
+    font-size: 22px;
+  }
+
+  .panel-subtitle {
+    font-size: 13px;
+  }
+
+  .arrow-wrapper {
+    width: 45px;
+    height: 45px;
+    right: 25px;
+  }
+
+  .arrow-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .components-container {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    padding: 25px;
+    gap: 16px;
+  }
+
+  .component-card {
+    padding: 20px;
+    min-height: 130px;
+  }
+
+  .component-number {
+    width: 55px;
+    height: 55px;
+  }
+
+  .number-text {
+    font-size: 20px;
+  }
+
+  .component-name {
+    font-size: 15px;
+  }
+
+  .component-description {
+    font-size: 12px;
+  }
+
+  .icon-bubble {
+    width: 65px;
+    height: 65px;
+    font-size: 32px;
+    top: -14px;
+    right: -14px;
+  }
+}
+
 @media (max-width: 768px) {
   .panel-header {
     padding: 20px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header-content {
+    margin-bottom: 15px;
+  }
+
+  .arrow-wrapper {
+    position: static;
+    margin-left: 0;
+    margin-top: 10px;
   }
 
   .panel-title {
@@ -527,6 +611,7 @@ export default {
 
   .component-card {
     padding: 16px;
+    min-height: 120px;
   }
 
   .component-number {
@@ -538,12 +623,302 @@ export default {
     font-size: 18px;
   }
 
+  .component-name {
+    font-size: 14px;
+  }
+
+  .component-description {
+    font-size: 11px;
+  }
+
   .icon-bubble {
     width: 60px;
     height: 60px;
     font-size: 28px;
     top: -12px;
     right: -12px;
+  }
+}
+
+@media (max-width: 576px) {
+  .panel-container {
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .panel-header {
+    padding: 18px 16px;
+  }
+
+  .panel-title {
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+
+  .panel-subtitle {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  .arrow-wrapper {
+    width: 40px;
+    height: 40px;
+  }
+
+  .arrow-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .components-container {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .component-card {
+    padding: 14px;
+    border-radius: 12px;
+    min-height: 110px;
+  }
+
+  .card-content {
+    gap: 12px;
+  }
+
+  .component-number {
+    width: 45px;
+    height: 45px;
+  }
+
+  .number-text {
+    font-size: 16px;
+  }
+
+  .component-name {
+    font-size: 13px;
+  }
+
+  .component-description {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .icon-bubble {
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+    top: -10px;
+    right: -10px;
+  }
+
+  .blob-1 {
+    width: 80px;
+    height: 80px;
+  }
+
+  .blob-2 {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-header {
+    padding: 16px 14px;
+  }
+
+  .panel-title {
+    font-size: 15px;
+  }
+
+  .panel-subtitle {
+    font-size: 10px;
+  }
+
+  .components-container {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .component-card {
+    padding: 12px;
+    min-height: 100px;
+  }
+
+  .component-number {
+    width: 40px;
+    height: 40px;
+  }
+
+  .number-text {
+    font-size: 14px;
+  }
+
+  .component-name {
+    font-size: 12px;
+  }
+
+  .component-description {
+    font-size: 9px;
+  }
+
+  .icon-bubble {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    top: -8px;
+    right: -8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .panel-container {
+    border-radius: 10px;
+  }
+
+  .panel-header {
+    padding: 14px 12px;
+  }
+
+  .panel-title {
+    font-size: 14px;
+  }
+
+  .panel-subtitle {
+    font-size: 9px;
+  }
+
+  .arrow-wrapper {
+    width: 35px;
+    height: 35px;
+  }
+
+  .arrow-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .components-container {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .component-card {
+    padding: 10px;
+    border-radius: 8px;
+    min-height: 90px;
+  }
+
+  .card-content {
+    gap: 10px;
+  }
+
+  .component-number {
+    width: 35px;
+    height: 35px;
+  }
+
+  .number-text {
+    font-size: 12px;
+  }
+
+  .component-name {
+    font-size: 11px;
+  }
+
+  .component-description {
+    font-size: 8px;
+  }
+
+  .icon-bubble {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    top: -6px;
+    right: -6px;
+  }
+
+  .blob-1 {
+    width: 60px;
+    height: 60px;
+  }
+
+  .blob-2 {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+/* Touch devices adjustments */
+@media (hover: none) and (pointer: coarse) {
+  .component-card:hover {
+    transform: none;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(31, 44, 81, 0.15);
+  }
+
+  .component-card:active {
+    transform: scale(0.98);
+    border-color: #1f2c51;
+    box-shadow: 0 8px 25px rgba(31, 44, 81, 0.2);
+  }
+
+  .panel-header:hover {
+    box-shadow: none;
+  }
+
+  .panel-header:active {
+    box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+
+  .arrow-wrapper:hover {
+    transform: none;
+  }
+
+  .arrow-wrapper:active {
+    transform: scale(0.95);
+  }
+
+  .component-card:hover .icon-bubble {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  .component-card:active .icon-bubble {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .component-card:hover .gradient-blob {
+    opacity: 0.1;
+  }
+
+  .component-card:active .gradient-blob {
+    opacity: 0.15;
+  }
+
+  .component-card:hover .card-line {
+    opacity: 0;
+  }
+
+  .component-card:active .card-line {
+    opacity: 1;
+    animation: slideLineAnimation 0.4s ease-out;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .panel-container {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .component-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  .component-card:hover {
+    box-shadow: 0 10px 25px rgba(31, 44, 81, 0.15);
   }
 }
 </style>

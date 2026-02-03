@@ -1,166 +1,6 @@
 <template>
-  <div class="bg-gradient-to-br from-orange-500 to-amber-600 backdrop-blur-xl rounded-3xl p-12 shadow-2xl shadow-orange-500/20 border border-orange-200/30 hover:shadow-3xl hover:shadow-orange-500/30 hover:-translate-y-2 transition-all duration-500 ease-out animate-slideInUp min-h-[500px] h-full flex flex-col justify-center grid-cols-2 relative overflow-hidden">
-    <div class="relative z-10 grid grid-cols-[250px_1fr] gap-10 items-center">
-      <!-- Animación de sistema solar profesional -->
-      <div class="solar-animation">
-        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <!-- Gradientes profesionales -->
-            <linearGradient id="sunGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
-            </linearGradient>
-
-            <linearGradient id="panelGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color:#1e40af;stop-opacity:1" />
-              <stop offset="50%" style="stop-color:#1e3a8a;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#1e293b;stop-opacity:1" />
-            </linearGradient>
-
-            <linearGradient id="houseWall" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#f1f5f9;stop-opacity:1" />
-            </linearGradient>
-
-            <linearGradient id="roofGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#334155;stop-opacity:1" />
-            </linearGradient>
-
-            <filter id="shadow">
-              <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.3"/>
-            </filter>
-
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-
-          <!-- Sol minimalista y profesional -->
-          <g class="sun-pro">
-            <circle cx="200" cy="80" r="32" fill="url(#sunGradient)" opacity="0.95" filter="url(#shadow)"/>
-            <circle cx="200" cy="80" r="28" fill="#fef3c7" opacity="0.8"/>
-
-            <!-- Rayos minimalistas -->
-            <g class="sun-rays-pro">
-              <line x1="200" y1="38" x2="200" y2="20" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r1"/>
-              <line x1="236" y1="56" x2="250" y2="42" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r2"/>
-              <line x1="254" y1="80" x2="272" y2="80" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r3"/>
-              <line x1="236" y1="104" x2="250" y2="118" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r4"/>
-              <line x1="200" y1="122" x2="200" y2="140" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r8"/>
-              <line x1="164" y1="56" x2="150" y2="42" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r5"/>
-              <line x1="146" y1="80" x2="128" y2="80" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r6"/>
-              <line x1="164" y1="104" x2="150" y2="118" stroke="#fbbf24" stroke-width="6" stroke-linecap="round" opacity="1" class="ray-modern r7"/>
-            </g>
-          </g>
-
-          <!-- Conexiones de energía elegantes -->
-          <g class="energy-connections">
-            <path d="M200,112 L140,180" stroke="#60a5fa" stroke-width="2" fill="none"
-                  stroke-dasharray="6,4" opacity="0" class="energy-path ep1" stroke-linecap="round"/>
-            <path d="M200,112 L200,180" stroke="#60a5fa" stroke-width="2" fill="none"
-                  stroke-dasharray="6,4" opacity="0" class="energy-path ep2" stroke-linecap="round"/>
-            <path d="M200,112 L260,180" stroke="#60a5fa" stroke-width="2" fill="none"
-                  stroke-dasharray="6,4" opacity="0" class="energy-path ep3" stroke-linecap="round"/>
-
-            <!-- Puntos de energía -->
-            <circle cx="140" cy="180" r="4" fill="#60a5fa" opacity="0" class="energy-point ep1" filter="url(#glow)"/>
-            <circle cx="200" cy="180" r="4" fill="#60a5fa" opacity="0" class="energy-point ep2" filter="url(#glow)"/>
-            <circle cx="260" cy="180" r="4" fill="#60a5fa" opacity="0" class="energy-point ep3" filter="url(#glow)"/>
-          </g>
-
-          <!-- Sistema de paneles solares isométrico profesional -->
-          <g class="solar-panel-system" filter="url(#shadow)">
-            <!-- Panel principal central -->
-            <g transform="translate(155, 185)">
-              <!-- Superficie del panel -->
-              <rect width="90" height="50" rx="3" fill="url(#panelGradient)" stroke="#0f172a" stroke-width="2"/>
-
-              <!-- Grid profesional -->
-              <line x1="30" y1="0" x2="30" y2="50" stroke="#334155" stroke-width="1.2" opacity="0.4"/>
-              <line x1="60" y1="0" x2="60" y2="50" stroke="#334155" stroke-width="1.2" opacity="0.4"/>
-              <line x1="0" y1="16.7" x2="90" y2="16.7" stroke="#334155" stroke-width="1.2" opacity="0.4"/>
-              <line x1="0" y1="33.4" x2="90" y2="33.4" stroke="#334155" stroke-width="1.2" opacity="0.4"/>
-
-              <!-- Celdas fotovoltaicas con brillo -->
-              <rect x="5" y="5" width="24" height="11" fill="#2563eb" opacity="0.7" class="solar-cell sc1" rx="1"/>
-              <rect x="33" y="5" width="24" height="11" fill="#2563eb" opacity="0.7" class="solar-cell sc2" rx="1"/>
-              <rect x="61" y="5" width="24" height="11" fill="#2563eb" opacity="0.7" class="solar-cell sc3" rx="1"/>
-
-              <rect x="5" y="19.5" width="24" height="11" fill="#2563eb" opacity="0.7" class="solar-cell sc4" rx="1"/>
-              <rect x="33" y="19.5" width="24" height="11" fill="#2563eb" opacity="0.7" class="solar-cell sc5" rx="1"/>
-              <rect x="61" y="19.5" width="24" height="11" fill="#2563eb" opacity="0.7" class="solar-cell sc6" rx="1"/>
-
-              <!-- Reflejos realistas -->
-              <rect x="2" y="2" width="40" height="20" fill="url(#reflection)" opacity="0.3" rx="2"/>
-              <defs>
-                <linearGradient id="reflection" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.6" />
-                  <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
-                </linearGradient>
-              </defs>
-
-              <!-- Marco metálico -->
-              <rect width="90" height="50" rx="3" fill="none" stroke="#64748b" stroke-width="2.5" opacity="0.8"/>
-            </g>
-          </g>
-
-          <!-- Casa moderna y profesional -->
-          <g class="modern-house" filter="url(#shadow)">
-            <!-- Estructura principal -->
-            <rect x="230" y="250" width="100" height="80" rx="4" fill="url(#houseWall)" stroke="#cbd5e1" stroke-width="2"/>
-
-            <!-- Techo moderno plano con ligera inclinación -->
-            <path d="M225,250 L335,250 L330,235 L230,235 Z" fill="url(#roofGradient)" stroke="#1e293b" stroke-width="2"/>
-
-            <!-- Detalles del techo -->
-            <line x1="230" y1="240" x2="330" y2="240" stroke="#1e293b" stroke-width="1" opacity="0.3"/>
-
-            <!-- Ventana izquierda moderna -->
-            <g class="window-modern wm1">
-              <rect x="245" y="270" width="25" height="30" rx="2" fill="#dbeafe" stroke="#64748b" stroke-width="2"/>
-              <line x1="257.5" y1="270" x2="257.5" y2="300" stroke="#94a3b8" stroke-width="1.5"/>
-              <line x1="245" y1="285" x2="270" y2="285" stroke="#94a3b8" stroke-width="1.5"/>
-              <!-- Reflejo en ventana -->
-              <rect x="247" y="272" width="10" height="12" fill="#ffffff" opacity="0.4" rx="1"/>
-            </g>
-
-            <!-- Ventana derecha moderna -->
-            <g class="window-modern wm2">
-              <rect x="295" y="270" width="25" height="30" rx="2" fill="#dbeafe" stroke="#64748b" stroke-width="2"/>
-              <line x1="307.5" y1="270" x2="307.5" y2="300" stroke="#94a3b8" stroke-width="1.5"/>
-              <line x1="295" y1="285" x2="320" y2="285" stroke="#94a3b8" stroke-width="1.5"/>
-              <!-- Reflejo en ventana -->
-              <rect x="297" y="272" width="10" height="12" fill="#ffffff" opacity="0.4" rx="1"/>
-            </g>
-
-            <!-- Puerta moderna -->
-            <rect x="272" y="290" width="22" height="40" rx="2" fill="#475569" stroke="#1e293b" stroke-width="2"/>
-            <circle cx="289" cy="310" r="2" fill="#fbbf24" opacity="0.9"/>
-            <line x1="272" y1="310" x2="294" y2="310" stroke="#334155" stroke-width="1" opacity="0.3"/>
-
-            <!-- Base/jardín minimalista -->
-            <rect x="225" y="330" width="110" height="3" fill="#22c55e" opacity="0.6" rx="1"/>
-          </g>
-
-          <!-- Indicador de energía limpia -->
-          <g class="energy-indicator">
-            <circle cx="200" cy="365" r="18" fill="#10b981" opacity="0.2" class="indicator-pulse"/>
-            <circle cx="200" cy="365" r="12" fill="#10b981" opacity="0.9"/>
-            <path d="M200,358 L197,365 L200,365 L203,372 L200,365" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
-          </g>
-
-          <!-- Etiquetas informativas opcionales -->
-          <g class="info-labels" font-family="Montserrat" font-size="10" fill="#475569" font-weight="600">
-            <text x="200" y="395" text-anchor="middle" opacity="0.7">SISTEMA ON-GRID</text>
-          </g>
-        </svg>
-      </div>
-
+  <div class="panel2">
+  <div class="relative z-10 grid grid-cols-1 gap-4 items-center">
       <!-- Texto de Soinsolar -->
       <div class="company-info">
         <h3 class="company-title">Soinsolar S.A.S</h3>
@@ -171,9 +11,6 @@
           A continuación, presentamos nuestra propuesta de cotización para sistemas solares fotovoltaicos conectados a la red (On-Grid), orientada a optimizar el consumo energético y reducir los costos en la factura eléctrica.
         </p>
       </div>
-
-      <!-- Decoración de fondo artística -->
-      <div class="panel-glow"></div>
 
       <!-- Partículas flotantes -->
       <div class="particles-container">
@@ -198,6 +35,7 @@
         <div class="deco-circle circle2"></div>
         <div class="deco-circle circle3"></div>
       </div>
+
     </div>
   </div>
 </template>
@@ -207,195 +45,239 @@
 </script>
 
 <style scoped>
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@reference "tailwindcss";
+
+.panel2 {
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  border-radius: 16px;
+  @apply p-0 shadow-lg min-h-[500px] h-full flex flex-col col-span-2 font-['Inter'] relative overflow-hidden;
+}
+
+@keyframes background-flash {
+  0%, 100% { background: linear-gradient(135deg, #F5B027 0%, #E89B1C 100%); }
+  50% { background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%); }
+}
 
 /* Custom animations for solar system */
-@layer components {
-  .solar-animation {
-    @apply w-full max-w-[280px] h-auto drop-shadow-[0_10px_30px_rgba(0,0,0,0.15)];
-  }
 
-  .solar-animation svg {
-    @apply w-full h-auto;
-  }
+.solar-animation {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
 
-  .sun-pro {
-    animation: sun-float 6s ease-in-out infinite;
-  }
+.solar-animation svg {
+  width: 100%;
+  height: auto;
+}
 
-  .ray-modern {
-    animation: ray-pulse 2.5s ease-in-out infinite;
-    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
-  }
+.sun-pro {
+}
 
-  .r1 { animation-delay: 0s; }
-  .r2 { animation-delay: 0.15s; }
-  .r3 { animation-delay: 0.3s; }
-  .r4 { animation-delay: 0.45s; }
-  .r5 { animation-delay: 0.6s; }
-  .r6 { animation-delay: 0.75s; }
-  .r7 { animation-delay: 0.9s; }
-  .r8 { animation-delay: 1.05s; }
+.ray-modern {
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
+}
 
-  .energy-path {
-    stroke-dasharray: 120;
-    stroke-dashoffset: 120;
-    animation: energy-flow 3s ease-in-out infinite;
-  }
+.energy-path {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+}
 
-  .ep1 { animation-delay: 0s; }
-  .ep2 { animation-delay: 0.5s; }
-  .ep3 { animation-delay: 1s; }
+.energy-point {
+}
 
-  .energy-point {
-    animation: point-appear 3s ease-in-out infinite;
-  }
+.solar-panel-system {
+}
 
-  .ep1.energy-point { animation-delay: 0s; }
-  .ep2.energy-point { animation-delay: 0.5s; }
-  .ep3.energy-point { animation-delay: 1s; }
+.solar-cell {
+}
 
-  .solar-panel-system {
-    animation: panel-shimmer 8s ease-in-out infinite;
-  }
+.modern-house {
+}
 
-  .solar-cell {
-    animation: cell-charge 4s ease-in-out infinite;
-  }
+.window-modern rect:first-child {
+}
 
-  .sc1 { animation-delay: 0s; }
-  .sc2 { animation-delay: 0.3s; }
-  .sc3 { animation-delay: 0.6s; }
-  .sc4 { animation-delay: 0.9s; }
-  .sc5 { animation-delay: 1.2s; }
-  .sc6 { animation-delay: 1.5s; }
+.indicator-pulse {
+}
 
-  .modern-house {
-    animation: house-settle 5s ease-in-out infinite;
-  }
+.company-info {
+  text-align: justify;
+  font-family: Montserrat, sans-serif;
+  padding: 20px 20px 20px 40px;
+  border-radius: 0;
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+  background: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 0;
+  column-count: 2;
+  column-gap: 20px;
+}
 
-  .window-modern rect:first-child {
-    animation: window-glow 4s ease-in-out infinite alternate;
-  }
+.company-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 24px;
+  font-family: Montserrat, sans-serif;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
 
-  .wm1 rect:first-child {
-    animation-delay: 0s;
-  }
+.company-description {
+  font-size: 1.25rem;
+  line-height: 1.9;
+  color: #ffffff;
+  font-weight: 500;
+  font-family: Montserrat, sans-serif;
+  margin-bottom: 20px;
+  text-align: justify;
+  hyphens: auto;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
 
-  .wm2 rect:first-child {
-    animation-delay: 2s;
-  }
+.company-description:last-child {
+  margin-bottom: 0;
+}
 
-  .indicator-pulse {
-    animation: pulse-indicator 2s ease-in-out infinite;
-  }
+.panel-glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  pointer-events: none;
+  background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+}
 
-  .company-info {
-    @apply text-justify font-montserrat;
-  }
+.particles-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
-  .company-title {
-    @apply text-4xl font-black text-white mb-6 font-montserrat -tracking-[0.5px];
-  }
+.particle-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
 
-  .company-description {
-    @apply text-xl leading-[1.9] text-white/90 font-medium font-montserrat mb-5 text-justify hyphens-auto;
-  }
+.particle-dot:nth-child(1) {
+  top: 20%;
+  left: 15%;
+  animation: float-particle 8s ease-in-out infinite;
+}
 
-  .company-description:last-child {
-    @apply mb-0;
-  }
+.particle-dot:nth-child(2) {
+  top: 60%;
+  left: 80%;
+  animation: float-particle 10s ease-in-out infinite 1s;
+}
 
-  .panel-glow {
-    @apply absolute -top-1/2 -left-1/2 w-[200%] h-[200%] pointer-events-none;
-    background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
-    animation: rotate-glow 25s linear infinite;
-  }
+.particle-dot:nth-child(3) {
+  top: 40%;
+  left: 70%;
+  animation: float-particle 12s ease-in-out infinite 2s;
+}
 
-  .particles-container {
-    @apply absolute inset-0 overflow-hidden pointer-events-none;
-  }
+.particle-dot:nth-child(4) {
+  top: 80%;
+  left: 25%;
+  animation: float-particle 9s ease-in-out infinite 1.5s;
+}
 
-  .particle-dot {
-    @apply absolute w-1.5 h-1.5 bg-white/60 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.8)];
-  }
+.particle-dot:nth-child(5) {
+  top: 15%;
+  left: 90%;
+  animation: float-particle 11s ease-in-out infinite 0.5s;
+}
 
-  .particle-dot:nth-child(1) {
-    @apply top-[20%] left-[15%];
-    animation: float-particle 8s ease-in-out infinite;
-  }
+.particle-dot:nth-child(6) {
+  top: 70%;
+  left: 50%;
+  animation: float-particle 13s ease-in-out infinite 2.5s;
+}
 
-  .particle-dot:nth-child(2) {
-    @apply top-[60%] left-[80%];
-    animation: float-particle 10s ease-in-out infinite 1s;
-  }
+.lines-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
-  .particle-dot:nth-child(3) {
-    @apply top-[40%] left-[70%];
-    animation: float-particle 12s ease-in-out infinite 2s;
-  }
+.animated-line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent);
+  border-radius: 1px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
 
-  .particle-dot:nth-child(4) {
-    @apply top-[80%] left-[25%];
-    animation: float-particle 9s ease-in-out infinite 1.5s;
-  }
+.line1 {
+  width: 150px;
+  top: 25%;
+  left: -150px;
+  animation: slide-line-1 6s ease-in-out infinite;
+}
 
-  .particle-dot:nth-child(5) {
-    @apply top-[15%] left-[90%];
-    animation: float-particle 11s ease-in-out infinite 0.5s;
-  }
+.line2 {
+  width: 200px;
+  top: 55%;
+  left: -200px;
+  animation: slide-line-2 8s ease-in-out infinite 2s;
+}
 
-  .particle-dot:nth-child(6) {
-    @apply top-[70%] left-[50%];
-    animation: float-particle 13s ease-in-out infinite 2.5s;
-  }
+.line3 {
+  width: 120px;
+  top: 75%;
+  left: -120px;
+  animation: slide-line-3 7s ease-in-out infinite 4s;
+}
 
-  .lines-container {
-    @apply absolute inset-0 overflow-hidden pointer-events-none;
-  }
+.circles-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
 
-  .animated-line {
-    @apply absolute h-0.5 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-sm shadow-[0_0_10px_rgba(255,255,255,0.5)];
-  }
+.deco-circle {
+  position: absolute;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
 
-  .line1 {
-    @apply w-[150px] top-[25%] -left-[150px];
-    animation: slide-line-1 6s ease-in-out infinite;
-  }
+.circle1 {
+  width: 80px;
+  height: 80px;
+  top: 10%;
+  right: 10%;
+}
 
-  .line2 {
-    @apply w-[200px] top-[55%] -left-[200px];
-    animation: slide-line-2 8s ease-in-out infinite 2s;
-  }
+.circle2 {
+  width: 120px;
+  height: 120px;
+  bottom: 15%;
+  left: 5%;
+}
 
-  .line3 {
-    @apply w-[120px] top-[75%] -left-[120px];
-    animation: slide-line-3 7s ease-in-out infinite 4s;
-  }
-
-  .circles-container {
-    @apply absolute inset-0 overflow-hidden pointer-events-none;
-  }
-
-  .deco-circle {
-    @apply absolute border-2 border-white/20 rounded-full;
-    animation: expand-circle 8s ease-in-out infinite;
-  }
-
-  .circle1 {
-    @apply w-20 h-20 top-[10%] right-[10%];
-    animation-delay: 0s;
-  }
-
-  .circle2 {
-    @apply w-30 h-30 bottom-[15%] left-[5%];
-    animation-delay: 2s;
-  }
-
-  .circle3 {
-    @apply w-15 h-15 top-[50%] left-[85%];
-    animation-delay: 4s;
-  }
+.circle3 {
+  width: 60px;
+  height: 60px;
+  top: 50%;
+  left: 85%;
 }
 
 @keyframes sun-float {
@@ -490,34 +372,28 @@
 
 /* Responsive design */
 @media (max-width: 1024px) {
-  .panel-content {
-    @apply grid-cols-1 gap-10 text-center;
-  }
-
   .solar-animation {
-    @apply mx-auto;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .company-description {
-    @apply text-center;
+    text-align: center;
   }
 }
 
 @media (max-width: 768px) {
-  .panel2 {
-    @apply p-6 min-h-[400px];
-  }
-
   .company-title {
-    @apply text-3xl;
+    font-size: 1.875rem;
   }
 
   .company-description {
-    @apply text-lg leading-[1.8];
+    font-size: 1.125rem;
+    line-height: 1.8;
   }
 
   .solar-animation {
-    @apply max-w-[180px];
+    max-width: 180px;
   }
 }
 </style>

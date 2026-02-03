@@ -6,17 +6,26 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "fabric": "^7.1.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.0.0",
+    "npm": "^11.8.0",
     "pinia": "^3.0.4",
-    "vue": "^3.5.24"
+    "start": "^5.1.0",
+    "vue": "^3.5.24",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
     "@vitejs/plugin-vue": "^6.0.1",
+    "autoprefixer": "^10.4.23",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
     "vite": "npm:rolldown-vite@7.2.5"
   },
   "overrides": {

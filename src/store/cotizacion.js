@@ -23,6 +23,57 @@ export const useCotizacionStore = defineStore('cotizacion', {
       const registrosGuardados = localStorage.getItem('cotizaciones_solar')
       if (registrosGuardados) {
         this.registros = JSON.parse(registrosGuardados)
+      } else {
+        // Agregar datos de ejemplo si no hay registros guardados
+        this.registros = [
+          {
+            id: 1,
+            fecha: new Date(Date.now() - 86400000).toISOString(), // Hace 1 día
+            name: 'Juan Pérez',
+            email: 'juan.perez@email.com',
+            phone: '3001234567',
+            city: 'Bogotá',
+            consumo: 250,
+            factura: 'si',
+            tipoInmueble: 'casa',
+            tipoTecho: 'teja',
+            area: 50,
+            politica: true,
+            contacto: true
+          },
+          {
+            id: 2,
+            fecha: new Date(Date.now() - 43200000).toISOString(), // Hace 12 horas
+            name: 'María González',
+            email: 'maria.gonzalez@email.com',
+            phone: '3019876543',
+            city: 'Medellín',
+            consumo: 180,
+            factura: 'no',
+            tipoInmueble: 'apartamento',
+            tipoTecho: 'plano',
+            area: 35,
+            politica: true,
+            contacto: true
+          },
+          {
+            id: 3,
+            fecha: new Date().toISOString(), // Ahora
+            name: 'Carlos Rodríguez',
+            email: 'carlos.rodriguez@email.com',
+            phone: '3025551234',
+            city: 'Cali',
+            consumo: 320,
+            factura: 'si',
+            tipoInmueble: 'oficina',
+            tipoTecho: 'metalico',
+            area: 80,
+            politica: true,
+            contacto: true
+          }
+        ]
+        // Guardar los datos de ejemplo en localStorage
+        localStorage.setItem('cotizaciones_solar', JSON.stringify(this.registros))
       }
     },
 
@@ -32,7 +83,11 @@ export const useCotizacionStore = defineStore('cotizacion', {
       const nuevoRegistro = {
         id: Date.now(),
         fecha: new Date().toISOString(),
-        ...registro
+        ...registro,
+        tipoAcometida: registro.tipoAcometida || '',
+        calibreAcometida: registro.calibreAcometida || '',
+        transformador: registro.transformador || '',
+        numeroMatricula: registro.numeroMatricula || ''
       }
 
       this.registros.push(nuevoRegistro)

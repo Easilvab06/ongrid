@@ -7,14 +7,12 @@
         <div class="input-section">
           <h3 class="section-title">Ingrese el Consumo del Cliente</h3>
           <div class="input-group">
-            <input 
-              v-model.number="consumoCliente" 
+            <input
+              v-model.number="consumoCliente"
               @input="calcularResultados"
-              type="number" 
+              type="number"
               placeholder="Ej: 212"
               class="consumo-input"
-              min="70"
-              max="2827"
             />
             <span class="input-unit">kWh/mes</span>
           </div>
@@ -83,6 +81,17 @@
               <span class="breakdown-separator">+</span>
               <span class="breakdown-item">Adicionales: {{ formatearMoneda(adicionales) }}</span>
             </div>
+            <div v-if="!isSharedLink" class="share-options">
+              <button @click="generarLink" class="share-btn clipboard-btn">
+                📋 Copiar Link
+              </button>
+              <button @click="compartirWhatsApp" class="share-btn whatsapp-btn">
+                📱 WhatsApp
+              </button>
+              <button @click="compartirEmail" class="share-btn email-btn">
+                ✉️ Email
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -100,7 +109,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 // Datos extraídos del Excel
 const datosExcel = [
@@ -149,6 +158,7 @@ const datosExcel = [
 const consumoCliente = ref(null)
 const adicionales = ref(0)
 const resultados = ref(null)
+const isSharedLink = ref(false)
 
 // Función equivalente a COINCIDIR de Excel
 const buscarCoincidencia = (valorBuscado) => {
@@ -186,6 +196,68 @@ const calcularResultados = () => {
   }
 }
 
+// Generar link para el cliente
+const generarLink = () => {
+  if (!consumoCliente.value) {
+    alert('Por favor ingrese un consumo válido antes de generar el link.')
+    return
+  }
+
+  const data = {
+    consumo: consumoCliente.value,
+    adicionales: adicionales.value || 0
+  }
+
+  const url = window.location.origin + window.location.pathname + '?data=' + encodeURIComponent(JSON.stringify(data))
+
+  // Copiar al portapapeles
+  navigator.clipboard.writeText(url).then(() => {
+    alert('Link copiado al portapapeles:\n' + url)
+  }).catch(() => {
+    // Fallback si no se puede copiar
+    alert('Link generado:\n' + url + '\n\nCópielo manualmente.')
+  })
+}
+
+// Compartir por WhatsApp
+const compartirWhatsApp = () => {
+  if (!consumoCliente.value) {
+    alert('Por favor ingrese un consumo válido antes de compartir.')
+    return
+  }
+
+  const data = {
+    consumo: consumoCliente.value,
+    adicionales: adicionales.value || 0
+  }
+
+  const url = window.location.origin + window.location.pathname + '?data=' + encodeURIComponent(JSON.stringify(data))
+  const mensaje = `Hola! Te comparto la cotización de tu proyecto solar:\n\n${url}\n\nConsumo: ${consumoCliente.value} kWh/mes\nValor total: ${formatearMoneda(resultados.value.valorTotalConAdicionales)}`
+
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(mensaje)}`
+  window.open(whatsappUrl, '_blank')
+}
+
+// Compartir por Email
+const compartirEmail = () => {
+  if (!consumoCliente.value) {
+    alert('Por favor ingrese un consumo válido antes de compartir.')
+    return
+  }
+
+  const data = {
+    consumo: consumoCliente.value,
+    adicionales: adicionales.value || 0
+  }
+
+  const url = window.location.origin + window.location.pathname + '?data=' + encodeURIComponent(JSON.stringify(data))
+  const asunto = 'Cotización Proyecto Solar - Soinsolar'
+  const cuerpo = `Hola!\n\nTe comparto la cotización de tu proyecto solar:\n\n${url}\n\nDetalles de la cotización:\n- Consumo: ${consumoCliente.value} kWh/mes\n- Valor total: ${formatearMoneda(resultados.value.valorTotalConAdicionales)}\n\nSaludos,\nEquipo Soinsolar`
+
+  const emailUrl = `mailto:?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`
+  window.open(emailUrl, '_blank')
+}
+
 // Formatear moneda colombiana
 const formatearMoneda = (valor) => {
   return new Intl.NumberFormat('es-CO', {
@@ -195,6 +267,22 @@ const formatearMoneda = (valor) => {
     maximumFractionDigits: 0
   }).format(valor)
 }
+
+// Cargar datos desde URL si existen
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search)
+  isSharedLink.value = urlParams.has('data')
+  if (urlParams.has('data')) {
+    try {
+      const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      consumoCliente.value = data.consumo || null
+      adicionales.value = data.adicionales || 0
+      calcularResultados()
+    } catch (error) {
+      console.error('Error loading data from URL:', error)
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -462,6 +550,69 @@ const formatearMoneda = (valor) => {
   font-size: 16px;
 }
 
+/* Opciones de compartir */
+.share-options {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  padding: 10px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.clipboard-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.clipboard-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.whatsapp-btn {
+  background: rgba(25, 187, 0, 0.2);
+  color: #ffffff;
+  border-color: rgba(25, 187, 0, 0.3);
+}
+
+.whatsapp-btn:hover {
+  background: rgba(25, 187, 0, 0.3);
+  border-color: rgba(25, 187, 0, 0.5);
+}
+
+.email-btn {
+  background: rgba(59, 130, 246, 0.2);
+  color: #ffffff;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.email-btn:hover {
+  background: rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
 /* Sin resultados */
 .no-results {
   text-align: center;
@@ -535,6 +686,10 @@ const formatearMoneda = (valor) => {
     transform: translateX(-50%);
     margin-left: -110px;
   }
+
+  .results-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -601,6 +756,68 @@ const formatearMoneda = (valor) => {
 
   .breakdown-item {
     padding: 4px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel3 {
+    padding: 16px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    min-height: 40px;
+  }
+
+  .consumo-input,
+  .adicionales-input {
+    font-size: 20px;
+    padding: 10px 14px;
+  }
+
+  .adicionales-input {
+    padding-left: 40px;
+  }
+
+  .currency-symbol {
+    font-size: 20px;
+    margin-left: -100px;
+  }
+
+  .input-unit {
+    font-size: 14px;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .result-card {
+    padding: 16px;
+  }
+
+  .result-icon {
+    font-size: 28px;
+    width: 45px;
+    height: 45px;
+  }
+
+  .result-value {
+    font-size: 20px;
+  }
+
+  .result-card.highlight .result-value-large {
+    font-size: 24px;
+  }
+
+  .breakdown {
+    font-size: 11px;
+    gap: 6px;
+  }
+
+  .breakdown-item {
+    padding: 3px 8px;
   }
 }
 </style>

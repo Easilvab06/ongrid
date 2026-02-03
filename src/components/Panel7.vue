@@ -34,8 +34,13 @@
       </div>
 
       <!-- Botón Contáctanos -->
-      <button class="contact-button" @click="showContactForm = true">
+      <button v-if="!isSharedLink" class="contact-button" @click="showContactForm = true">
         Contáctanos
+      </button>
+
+      <!-- Botón Nuestros Proyectos -->
+      <button class="proyectos-button" @click="openProyectos">
+        Nuestros Proyectos
       </button>
 
       <!-- Formulario de Contacto -->
@@ -158,6 +163,27 @@
                   <label class="gold-form-label" for="area">Área disponible para paneles (m²)</label>
                   <input class="gold-form-input" type="number" id="area" v-model="formData.area" min="1" required />
                 </div>
+                <div class="gold-form-group">
+                  <label class="gold-form-label" for="tipo-acometida">Tipo de acometida</label>
+                  <select class="gold-form-input" id="tipo-acometida" v-model="formData.tipoAcometida" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="monofasica">Monofásica</option>
+                    <option value="bifasica">Bifásica</option>
+                    <option value="trifasica">Trifásica</option>
+                  </select>
+                </div>
+                <div class="gold-form-group">
+                  <label class="gold-form-label" for="calibre-acometida">Calibre de acometida</label>
+                  <input class="gold-form-input" type="text" id="calibre-acometida" v-model="formData.calibreAcometida" placeholder="Ej: 4/0 AWG" required />
+                </div>
+                <div class="gold-form-group">
+                  <label class="gold-form-label" for="transformador">Transformador</label>
+                  <input class="gold-form-input" type="text" id="transformador" v-model="formData.transformador" placeholder="Ej: 25 kVA" required />
+                </div>
+                <div class="gold-form-group">
+                  <label class="gold-form-label" for="numero-matricula">Número de matrícula</label>
+                  <input class="gold-form-input" type="text" id="numero-matricula" v-model="formData.numeroMatricula" placeholder="Ej: 123456789" required />
+                </div>
               </div>
 
 
@@ -189,6 +215,11 @@
               <button class="excel-export-button" type="button" @click="exportToExcel" :disabled="isExporting">
                 {{ isExporting ? 'Exportando...' : '📊 Exportar a Excel' }}
               </button>
+
+              <!-- Botón para limpiar registros -->
+              <button class="clear-records-button" type="button" @click="clearRecords" :disabled="isClearing">
+                {{ isClearing ? 'Limpiando...' : '🗑️ Limpiar Registros' }}
+              </button>
             </form>
           </div>
         </div>
@@ -205,15 +236,21 @@ import { useCotizacionStore } from '../store/cotizacion.js'
 const showContactForm = ref(false)
 const isSubmitting = ref(false)
 const isExporting = ref(false)
+const isClearing = ref(false)
 const imagePreview = ref(null)
 const fileName = ref('')
 const fileSize = ref('')
 const fileInput = ref(null)
+const isSharedLink = ref(false)
 
 const cotizacionStore = useCotizacionStore()
 
 onMounted(() => {
   cotizacionStore.cargarRegistros()
+
+  // Check if this is a shared link (has 'data' parameter)
+  const urlParams = new URLSearchParams(window.location.search)
+  isSharedLink.value = urlParams.has('data')
 })
 
 const formData = ref({
@@ -228,6 +265,10 @@ const formData = ref({
   tipoInmueble: '',
   tipoTecho: '',
   area: '',
+  tipoAcometida: '',
+  calibreAcometida: '',
+  transformador: '',
+  numeroMatricula: '',
   politica: false,
   contacto: false
 })
@@ -239,6 +280,10 @@ const openSocial = (platform) => {
     Whatsapp: 'https://wa.me/573163799455',
   }
   window.open(urls[platform], '_blank')
+}
+
+const openProyectos = () => {
+  window.open('https://soinsolar.com/sistemas-solares-tecnolog%C3%ADa-inyecci%C3%B3n-a-la-red', '_blank')
 }
 
 const formatFileSize = (bytes) => {
@@ -400,6 +445,10 @@ Hora: ${new Date().toLocaleTimeString('es-CO')}`
       tipoInmueble: formData.value.tipoInmueble,
       tipoTecho: formData.value.tipoTecho,
       area: formData.value.area,
+      tipoAcometida: formData.value.tipoAcometida,
+      calibreAcometida: formData.value.calibreAcometida,
+      transformador: formData.value.transformador,
+      numeroMatricula: formData.value.numeroMatricula,
       politica: formData.value.politica,
       contacto: formData.value.contacto
     }
@@ -475,21 +524,13 @@ const exportToExcel = async () => {
   isExporting.value = true
 
   try {
-    // Obtener todos los registros del store
-    const registrosGuardados = cotizacionStore.obtenerRegistros()
-
-    // Crear lista completa de registros incluyendo el formulario actual
-    let todosLosRegistros = [...registrosGuardados]
-
-    // Verificar si hay datos en el formulario actual y agregarlos
+    // Verificar si hay datos en el formulario actual y guardarlos si es necesario
     const formularioActual = formData.value
     const tieneDatosBasicos = formularioActual.name && formularioActual.email && formularioActual.phone
 
     if (tieneDatosBasicos) {
-      // Crear registro temporal del formulario actual
+      // Guardar el formulario actual en el store
       const registroActual = {
-        id: 'FORMULARIO_ACTUAL',
-        fecha: new Date().toISOString(),
         name: formularioActual.name,
         email: formularioActual.email,
         phone: formularioActual.phone,
@@ -499,13 +540,19 @@ const exportToExcel = async () => {
         tipoInmueble: formularioActual.tipoInmueble,
         tipoTecho: formularioActual.tipoTecho,
         area: formularioActual.area,
+        tipoAcometida: formularioActual.tipoAcometida,
+        calibreAcometida: formularioActual.calibreAcometida,
+        transformador: formularioActual.transformador,
+        numeroMatricula: formularioActual.numeroMatricula,
         politica: formularioActual.politica,
         contacto: formularioActual.contacto
       }
 
-      // Agregar al inicio de la lista
-      todosLosRegistros.unshift(registroActual)
+      cotizacionStore.guardarRegistro(registroActual)
     }
+
+    // Obtener todos los registros del store (ahora incluye el formulario actual si fue guardado)
+    const todosLosRegistros = cotizacionStore.obtenerRegistros()
 
     if (todosLosRegistros.length === 0) {
       alert('❌ No hay registros para exportar. Complete al menos un formulario primero.')
@@ -524,10 +571,14 @@ const exportToExcel = async () => {
       'Tipo de inmueble': registro.tipoInmueble,
       'Tipo de techo': registro.tipoTecho,
       'Área disponible (m²)': registro.area,
+      'Tipo de acometida': registro.tipoAcometida || '',
+      'Calibre de acometida': registro.calibreAcometida || '',
+      'Transformador': registro.transformador || '',
+      'Número de matrícula': registro.numeroMatricula || '',
       'Política de datos': registro.politica ? 'Sí' : 'No',
       'Autorización de contacto': registro.contacto ? 'Sí' : 'No',
-      'Fecha de solicitud': registro.id === 'FORMULARIO_ACTUAL' ? 'FORMULARIO ACTUAL' : new Date(registro.fecha).toLocaleDateString('es-CO'),
-      'Hora de solicitud': registro.id === 'FORMULARIO_ACTUAL' ? new Date().toLocaleTimeString('es-CO') : new Date(registro.fecha).toLocaleTimeString('es-CO')
+      'Fecha de solicitud': new Date(registro.fecha).toLocaleDateString('es-CO'),
+      'Hora de solicitud': new Date(registro.fecha).toLocaleTimeString('es-CO')
     }))
 
     // Crear libro de Excel
@@ -540,7 +591,7 @@ const exportToExcel = async () => {
     XLSX.writeFile(wb, fileName)
 
     const mensajeExito = tieneDatosBasicos
-      ? `✅ Archivo Excel exportado exitosamente! Se exportaron ${todosLosRegistros.length} registros (incluyendo el formulario actual).`
+      ? `✅ Archivo Excel exportado exitosamente! Se exportaron ${todosLosRegistros.length} registros (incluyendo el formulario actual guardado).`
       : `✅ Archivo Excel exportado exitosamente! Se exportaron ${todosLosRegistros.length} registros.`
 
     alert(mensajeExito)
@@ -549,6 +600,22 @@ const exportToExcel = async () => {
     alert('❌ Error al exportar el archivo Excel. Inténtalo de nuevo.')
   } finally {
     isExporting.value = false
+  }
+}
+
+const clearRecords = async () => {
+  if (confirm('¿Estás seguro de que quieres eliminar TODOS los registros almacenados? Esta acción no se puede deshacer.')) {
+    isClearing.value = true
+
+    try {
+      cotizacionStore.limpiarRegistros()
+      alert('✅ Todos los registros han sido eliminados exitosamente.')
+    } catch (error) {
+      console.error('Error al limpiar registros:', error)
+      alert('❌ Error al limpiar los registros. Inténtalo de nuevo.')
+    } finally {
+      isClearing.value = false
+    }
   }
 }
 </script>
@@ -931,6 +998,28 @@ const exportToExcel = async () => {
 }
 
 .contact-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 176, 39, 0.6);
+}
+
+.proyectos-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #F5B027, #1f2c51);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(245, 176, 39, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.proyectos-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(245, 176, 39, 0.6);
 }
@@ -1379,6 +1468,67 @@ const exportToExcel = async () => {
   box-shadow:
     0 4px 15px rgba(16, 185, 129, 0.3),
     0 2px 10px rgba(16, 185, 129, 0.2),
+    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+}
+
+/* Clear Records Button Styles */
+.clear-records-button {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  border: 2px solid #dc2626;
+  border-radius: 16px;
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 8px 25px rgba(220, 38, 38, 0.2),
+    0 4px 15px rgba(220, 38, 38, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.clear-records-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.clear-records-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.clear-records-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.clear-records-button:hover:not(:disabled) {
+  box-shadow:
+    0 12px 35px rgba(220, 38, 38, 0.4),
+    0 6px 20px rgba(220, 38, 38, 0.3),
+    inset 0 1px 3px rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.clear-records-button:active:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 15px rgba(220, 38, 38, 0.3),
+    0 2px 10px rgba(220, 38, 38, 0.2),
     inset 0 1px 3px rgba(255, 255, 255, 0.2);
 }
 </style>

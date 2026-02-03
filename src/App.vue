@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <!-- Partículas flotantes -->
-    <div class="particles">
+    <div class="particles fixed top-0 left-0 right-0 bottom-0 overflow-hidden z-0 pointer-events-none">
       <div class="particle"></div>
       <div class="particle"></div>
       <div class="particle"></div>
@@ -19,7 +19,7 @@
           </div>
           <div>
             <h1 class="title">Soinsolar</h1>
-            <p class="subtitle">Cotizador Profesional de Energía Solar</p>
+            <p class="subtitle">Tu proyecto solar en segundos</p>
           </div>
         </div>
         <div class="header-decoration"></div>
@@ -28,12 +28,13 @@
       <!-- Paneles Informativos -->
       <div class="panels-grid">
         <Panel1 />
-        <Panel6/>
+        <Panel6 class="full-width"/>
         <Panel2 />
          <Panel3 />
          <Panel4/>
           <Panel5/>
-           
+          <Panel7 />
+
       </div>
 
       <!-- Grid de componentes -->
@@ -47,33 +48,51 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Panel1 from './components/Panel1.vue'
 import Panel6 from './components/Panel6.vue'
 import Panel2 from './components/Panel2.vue'
 import Panel3 from './components/Panel3.vue'
 import Panel4 from './components/Panel4.vue'
 import Panel5 from './components/Panel5.vue'
+import Panel7 from './components/Panel7.vue'
+import { useCotizacionStore } from './store/cotizacion.js'
 
-
+const cotizacionStore = useCotizacionStore()
 const cotizadorRef = ref(null)
 const imageEditorRef = ref(null)
 const pdfPreviewRef = ref(null)
+
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.has('data')) {
+    try {
+      const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      cotizacionStore.consumo = data.consumo || 300
+      cotizacionStore.radiacion = data.radiacion || 4.5
+      cotizacionStore.generacion = data.generacion || 0
+      cotizacionStore.calcular()
+    } catch (error) {
+      console.error('Error loading data from URL:', error)
+    }
+  }
+})
 </script>
 
 <style scoped>
 .app-wrapper {
   position: relative;
-  z-index: 1;
+  z-index: 10;
   min-height: 100vh;
+  overflow: hidden; /* Prevent layout shifts from animations */
 }
 
 .particles {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
@@ -81,22 +100,25 @@ const pdfPreviewRef = ref(null)
 
 .particle {
   position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--shadow-orange), transparent);
+  border-radius: 9999px;
   animation: floatParticle 15s infinite ease-in-out;
 }
 
+.particle {
+  background: radial-gradient(circle, var(--shadow-orange), transparent);
+}
+
 .particle:nth-child(1) {
-  width: 100px;
-  height: 100px;
+  width: 96px;
+  height: 96px;
   left: 10%;
   top: 20%;
   animation-delay: 0s;
 }
 
 .particle:nth-child(2) {
-  width: 150px;
-  height: 150px;
+  width: 144px;
+  height: 144px;
   right: 10%;
   top: 60%;
   background: radial-gradient(circle, var(--shadow-blue), transparent);
@@ -112,8 +134,8 @@ const pdfPreviewRef = ref(null)
 }
 
 .particle:nth-child(4) {
-  width: 120px;
-  height: 120px;
+  width: 112px;
+  height: 112px;
   left: 70%;
   top: 10%;
   background: radial-gradient(circle, var(--shadow-blue), transparent);
@@ -141,8 +163,8 @@ const pdfPreviewRef = ref(null)
 
 .container {
   position: relative;
-  z-index: 1;
-  max-width: 1400px;
+  z-index: 10;
+  max-width: 80rem;
   margin: 0 auto;
   padding: 40px 20px;
   animation: fadeIn 0.8s ease-out;
@@ -150,7 +172,7 @@ const pdfPreviewRef = ref(null)
 
 .header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 64px;
   position: relative;
   animation: slideInDown 0.8s ease-out;
 }
@@ -160,35 +182,29 @@ const pdfPreviewRef = ref(null)
   align-items: center;
   gap: 24px;
   padding: 20px 40px;
-  background: var(--card);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
   border-radius: 24px;
-  border: 1px solid var(--border);
-  box-shadow: 
-    0 20px 60px rgba(0, 0, 0, 0.5),
-    0 0 40px var(--shadow-orange);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--shadow-orange);
+  transition: all 0.3s ease-out;
 }
 
 .logo-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 
-    0 30px 80px rgba(0, 0, 0, 0.6),
-    0 0 60px var(--shadow-orange);
+  transform: translateY(-6px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px var(--shadow-orange);
 }
 
 .icon-solar {
-  width: 70px;
-  height: 70px;
-  background: linear-gradient(135deg, var(--soinsolar-orange), var(--soinsolar-orange-dark));
-  border-radius: 20px;
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(to bottom right, #1f2c51, #1f2c51);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 
-    0 10px 30px var(--shadow-orange),
-    inset 0 0 20px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px var(--shadow-orange), inset 0 0 20px rgba(255, 255, 255, 0.2);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -201,32 +217,35 @@ const pdfPreviewRef = ref(null)
 .title {
   font-size: 48px;
   font-weight: 900;
-  background: linear-gradient(135deg, var(--soinsolar-orange), var(--soinsolar-blue));
+  background: linear-gradient(to bottom right,  #1f2c51);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: -1px;
+  letter-spacing: -0.02em;
   margin-bottom: 8px;
   text-shadow: 0 0 40px var(--shadow-orange);
+  font-family: Montserrat, sans-serif;
 }
 
 .subtitle {
   font-size: 14px;
-  color: var(--text-muted);
-  font-weight: 600;
+  color: #F5B027;
+  font-weight: bold;   /* o 700 */
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 0.1em;
+  font-family: Montserrat, sans-serif;
 }
+
 
 .header-decoration {
   position: absolute;
-  bottom: -30px;
+  bottom: -32px;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
+  width: 192px;
   height: 4px;
-  background: linear-gradient(90deg, transparent, var(--soinsolar-orange), var(--soinsolar-blue), transparent);
-  border-radius: 2px;
+  background: linear-gradient(to right, transparent, #fb923c, #3b82f6, transparent);
+  border-radius: 9999px;
   animation: shimmer 3s ease-in-out infinite;
 }
 
@@ -236,12 +255,17 @@ const pdfPreviewRef = ref(null)
   gap: 20px;
   margin-bottom: 40px;
   animation: slideInUp 0.8s ease-out 0.2s both;
+  will-change: transform, opacity; /* Optimize for animation */
+}
+
+.panels-grid .full-width {
+  grid-column: 1 / -1;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  gap: 32px;
   animation: slideInUp 0.8s ease-out 0.2s both;
 }
 
@@ -250,47 +274,126 @@ const pdfPreviewRef = ref(null)
 }
 
 @media (max-width: 1024px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
+
   .panels-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
-  
+
   .grid > :nth-child(3) {
     grid-column: 1;
   }
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+  }
+
   .title {
-    font-size: 36px;
+    font-size: 28px;
   }
-  
+
+  .subtitle {
+    font-size: 12px;
+  }
+
   .logo-box {
-    padding: 15px 30px;
-    gap: 16px;
+    padding: 12px 24px;
+    gap: 12px;
   }
-  
+
   .icon-solar {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
   }
-  
+
   .icon-solar svg {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .header-decoration {
+    width: 120px;
+    height: 3px;
   }
 
   .panels-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px 8px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .logo-box {
+    padding: 10px 20px;
+    gap: 10px;
+  }
+
+  .icon-solar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .icon-solar svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .header-decoration {
+    width: 100px;
+    height: 2px;
+  }
+
+  .panels-grid {
+    gap: 8px;
+  }
+
+  .grid {
+    gap: 12px;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInUp {
@@ -302,6 +405,13 @@ const pdfPreviewRef = ref(null)
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Prevent scrollbar flickering by ensuring consistent layout */
+html, body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
 }
 
 @keyframes slideInDown {
@@ -316,12 +426,20 @@ const pdfPreviewRef = ref(null)
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
 }
 </style>

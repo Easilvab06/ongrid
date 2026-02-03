@@ -1,8 +1,8 @@
 <template>
-  <div class="panel1">
+  <div v-if="!isSharedLink" class="panel1">
     <div class="panel-content">
       <!-- PANTALLA DE CARGA DE IMAGEN -->
-      <div v-if="!imageLoaded" class="upload-section">
+      <div v-if="!imageLoaded && !isSharedLink" class="upload-section">
         <div class="upload-container">
           <div class="upload-icon-box">
             <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
@@ -19,7 +19,7 @@
             </svg>
           </div>
           
-          <h2 class="upload-title">Visitas Técnicas - Editor</h2>
+          <h2 v-if="!isSharedLink" class="upload-title">Visitas Técnicas - Editor</h2>
           <p class="upload-subtitle">Carga una fotografía y edítala con herramientas avanzadas</p>
           
           <label class="upload-button">
@@ -203,6 +203,7 @@ const savedImages = ref([])
 const currentEditingIndex = ref(null)
 const drawnElements = ref([])
 const selectedElementIndex = ref(null)
+const isSharedLink = ref(false)
 
 const drawingCanvas = ref(null)
 const textInput = ref(null)
@@ -253,6 +254,10 @@ const fontFamilies = ['Arial', 'Verdana', 'Georgia', 'Courier New', 'Comic Sans 
 
 // ==================== LIFECYCLE ====================
 onMounted(() => {
+  // Check if this is a shared link (has 'data' parameter)
+  const urlParams = new URLSearchParams(window.location.search)
+  isSharedLink.value = urlParams.has('data')
+
   const saved = localStorage.getItem('savedTechnicalImages')
   if (saved) {
     try {
@@ -341,31 +346,43 @@ const handleImageUpload = (event) => {
 
 const initializeCanvas = (img) => {
   const canvas = drawingCanvas.value
-  if (!canvas) return
-  
-  const maxWidth = 900
-  const maxHeight = 650
-  let width = img.width
-  let height = img.height
-  
-  if (width > maxWidth || height > maxHeight) {
-    const ratio = Math.min(maxWidth / width, maxHeight / height)
-    width *= ratio
-    height *= ratio
+  if (!canvas) {
+    console.error('Canvas element not found')
+    return
   }
-  
-  canvas.width = width
-  canvas.height = height
-  ctx = canvas.getContext('2d', { willReadFrequently: true })
-  
-  baseImage = img
-  drawnElements.value = []
-  selectedElementIndex.value = null
-  history.value = []
-  currentHistoryIndex.value = -1
-  
-  redrawCanvas()
-  saveToHistory()
+
+  try {
+    const maxWidth = 900
+    const maxHeight = 650
+    let width = img.width
+    let height = img.height
+
+    if (width > maxWidth || height > maxHeight) {
+      const ratio = Math.min(maxWidth / width, maxHeight / height)
+      width *= ratio
+      height *= ratio
+    }
+
+    canvas.width = width
+    canvas.height = height
+    ctx = canvas.getContext('2d', { willReadFrequently: true })
+
+    if (!ctx) {
+      console.error('Failed to get canvas context')
+      return
+    }
+
+    baseImage = img
+    drawnElements.value = []
+    selectedElementIndex.value = null
+    history.value = []
+    currentHistoryIndex.value = -1
+
+    redrawCanvas()
+    saveToHistory()
+  } catch (error) {
+    console.error('Error initializing canvas:', error)
+  }
 }
 
 const getMousePos = (e) => {
@@ -613,7 +630,7 @@ const handleMouseMove = (e) => {
 
 const handleMouseUp = (e) => {
   if (!ctx) return
-  
+
   // ========== FINALIZAR TRANSFORMACIÓN ==========
   if (selectedTool.value === 'select' && isTransforming) {
     isTransforming = false
@@ -622,11 +639,17 @@ const handleMouseUp = (e) => {
     saveToHistory()
     return
   }
-  
+
   // ========== FINALIZAR DIBUJO ==========
   if (!isDrawing) return
-  
-  const pos = e.clientX !== undefined ? getMousePos(e) : { x: startX, y: startY }
+
+  let pos
+  try {
+    pos = getMousePos(e)
+  } catch (error) {
+    // Fallback for touch events or other edge cases
+    pos = { x: startX, y: startY }
+  }
   
   if (selectedTool.value === 'pen' && currentElement) {
     drawnElements.value.push(currentElement)
@@ -696,7 +719,9 @@ const handleTouchMove = (e) => {
 
 const handleTouchEnd = (e) => {
   e.preventDefault()
-  handleMouseUp({ clientX: undefined })
+  // Use the last touch position instead of undefined
+  const lastTouch = e.changedTouches[0]
+  handleMouseUp({ clientX: lastTouch.clientX, clientY: lastTouch.clientY })
 }
 
 const drawPreview = (x1, y1, x2, y2) => {
@@ -830,12 +855,15 @@ const redrawCanvas = () => {
 }
 
 const drawSelectionControls = (bounds) => {
-  const handleSize = 10
+  // Ajustar tamaños para dispositivos móviles
+  const isMobile = window.innerWidth <= 768
+  const handleSize = isMobile ? 16 : 10
+  const rotateHandleSize = isMobile ? 16 : 12
   const padding = 5
-  
+
   ctx.save()
   ctx.setTransform(1, 0, 0, 1, 0, 0) // Reset transformation para los controles
-  
+
   // Borde de selección
   ctx.strokeStyle = '#3b82f6'
   ctx.lineWidth = 2
@@ -847,7 +875,7 @@ const drawSelectionControls = (bounds) => {
     bounds.maxY - bounds.minY + padding * 2
   )
   ctx.setLineDash([])
-  
+
   // Handles de redimensionamiento
   const handles = [
     { x: bounds.minX, y: bounds.minY },
@@ -855,20 +883,20 @@ const drawSelectionControls = (bounds) => {
     { x: bounds.minX, y: bounds.maxY },
     { x: bounds.maxX, y: bounds.maxY }
   ]
-  
+
   ctx.fillStyle = '#3b82f6'
   ctx.strokeStyle = 'white'
   ctx.lineWidth = 2
-  
+
   handles.forEach(handle => {
     ctx.fillRect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize)
     ctx.strokeRect(handle.x - handleSize / 2, handle.y - handleSize / 2, handleSize, handleSize)
   })
-  
+
   // Handle de rotación (flecha circular arriba)
   const rotateHandleX = bounds.centerX
-  const rotateHandleY = bounds.minY - 30
-  
+  const rotateHandleY = bounds.minY - (isMobile ? 40 : 30)
+
   // Línea que conecta el handle con el elemento
   ctx.strokeStyle = '#3b82f6'
   ctx.lineWidth = 1
@@ -878,33 +906,34 @@ const drawSelectionControls = (bounds) => {
   ctx.lineTo(rotateHandleX, rotateHandleY)
   ctx.stroke()
   ctx.setLineDash([])
-  
+
   // Círculo del handle de rotación
   ctx.fillStyle = '#10b981'
   ctx.strokeStyle = 'white'
   ctx.lineWidth = 2
   ctx.beginPath()
-  ctx.arc(rotateHandleX, rotateHandleY, 12, 0, 2 * Math.PI)
+  ctx.arc(rotateHandleX, rotateHandleY, rotateHandleSize, 0, 2 * Math.PI)
   ctx.fill()
   ctx.stroke()
-  
+
   // Flecha de ciclo dentro del círculo
   ctx.strokeStyle = 'white'
   ctx.lineWidth = 2
   ctx.beginPath()
-  ctx.arc(rotateHandleX, rotateHandleY, 7, 0.2, 1.8 * Math.PI)
+  ctx.arc(rotateHandleX, rotateHandleY, rotateHandleSize * 0.4, 0.2, 1.8 * Math.PI)
   ctx.stroke()
-  
+
   // Punta de flecha
-  const arrowX = rotateHandleX + 7 * Math.cos(1.8 * Math.PI)
-  const arrowY = rotateHandleY + 7 * Math.sin(1.8 * Math.PI)
+  const arrowRadius = rotateHandleSize * 0.4
+  const arrowX = rotateHandleX + arrowRadius * Math.cos(1.8 * Math.PI)
+  const arrowY = rotateHandleY + arrowRadius * Math.sin(1.8 * Math.PI)
   ctx.beginPath()
   ctx.moveTo(arrowX, arrowY)
   ctx.lineTo(arrowX + 4, arrowY - 4)
   ctx.moveTo(arrowX, arrowY)
   ctx.lineTo(arrowX + 4, arrowY + 2)
   ctx.stroke()
-  
+
   ctx.restore()
 }
 
