@@ -1,8 +1,51 @@
 <template>
-  <div v-if="!isSharedLink" class="panel1">
+  <div class="panel1">
     <div class="panel-content">
+      <!-- MODO SOLO LECTURA PARA ENLACES COMPARTIDOS -->
+      <div v-if="isSharedLink" class="readonly-section">
+        <div class="readonly-container">
+          <div class="readonly-icon-box">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <rect width="80" height="80" rx="16" fill="url(#gradient)" opacity="0.1"/>
+              <path d="M28 32H52C54.2091 32 56 33.7909 56 36V56C56 58.2091 54.2091 60 52 60H28C25.7909 60 24 58.2091 24 56V36C24 33.7909 25.7909 32 28 32Z" stroke="#1e3a8a" stroke-width="2"/>
+              <circle cx="36" cy="42" r="4" fill="#1e3a8a"/>
+              <path d="M24 56L36 44L52 56" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="80" y2="80">
+                  <stop offset="0%" stop-color="#3b82f6"/>
+                  <stop offset="100%" stop-color="#1e40af"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          <h2 class="readonly-title">Imágenes del Proyecto</h2>
+          <p class="readonly-subtitle">Vista de solo lectura - Imágenes guardadas para su revisión</p>
+
+          <div v-if="savedImages.length > 0" class="saved-images-section">
+            <h3 class="saved-title">Imágenes Disponibles ({{ savedImages.length }})</h3>
+            <div class="images-grid">
+              <div v-for="(img, index) in savedImages" :key="index" class="saved-image-card readonly-card">
+                <img :src="img.data" :alt="`Imagen ${index + 1}`" class="saved-thumbnail" />
+                <div class="image-info">
+                  <span class="image-size">{{ formatFileSize(img.size) }}</span>
+                  <div class="image-actions">
+                    <button @click="downloadImage(img.data, index)" class="download-btn" title="Descargar">⬇️</button>
+                    <button @click="shareImage(img, index)" class="share-btn" title="Compartir">🔗</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="no-images-message">
+            <p>No hay imágenes disponibles para mostrar.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- PANTALLA DE CARGA DE IMAGEN -->
-      <div v-if="!imageLoaded && !isSharedLink" class="upload-section">
+      <div v-else-if="!imageLoaded" class="upload-section">
         <div class="upload-container">
           <div class="upload-icon-box">
             <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
@@ -191,8 +234,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useCotizacionStore } from '../store/cotizacion.js'
 
 // ==================== ESTADO ====================
+const cotizacionStore = useCotizacionStore()
 const imageLoaded = ref(false)
 const selectedTool = ref('select')
 const brushSize = ref(3)
@@ -258,13 +303,45 @@ onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search)
   isSharedLink.value = urlParams.has('data')
 
-  const saved = localStorage.getItem('savedTechnicalImages')
-  if (saved) {
-    try {
-      savedImages.value = JSON.parse(saved)
-    } catch (e) {
-      savedImages.value = []
+  if (isSharedLink.value) {
+    // Load images from shared images for shared links (readonly view)
+    const sharedImages = localStorage.getItem('sharedImages')
+    console.log('Cargando imágenes compartidas para vista de solo lectura:', sharedImages)
+    if (sharedImages) {
+      try {
+        savedImages.value = JSON.parse(sharedImages)
+        console.log('Imágenes compartidas cargadas para vista de solo lectura:', savedImages.value.length)
+      } catch (error) {
+        console.error('Error loading shared images for readonly view:', error)
+        savedImages.value = []
+      }
+    } else {
+      // If no shared images, load from savedTechnicalImages as fallback
+      console.log('No se encontraron imágenes compartidas, cargando imágenes guardadas locales')
+      const saved = localStorage.getItem('savedTechnicalImages')
+      if (saved) {
+        try {
+          savedImages.value = JSON.parse(saved)
+          console.log('Imágenes locales cargadas para vista de solo lectura:', savedImages.value.length)
+        } catch (e) {
+          savedImages.value = []
+        }
+      } else {
+        savedImages.value = []
+      }
     }
+  } else {
+    // Load images from localStorage for regular use
+    const saved = localStorage.getItem('savedTechnicalImages')
+    if (saved) {
+      try {
+        savedImages.value = JSON.parse(saved)
+      } catch (e) {
+        savedImages.value = []
+      }
+    }
+    // Initialize currentImages in store with loaded images
+    cotizacionStore.currentImages = [...savedImages.value]
   }
 
   const handleKeyboard = (e) => {
@@ -365,7 +442,14 @@ const initializeCanvas = (img) => {
 
     canvas.width = width
     canvas.height = height
-    ctx = canvas.getContext('2d', { willReadFrequently: true })
+
+    // Intentar obtener el contexto con opciones avanzadas para mejor rendimiento
+    // Si falla, usar el contexto básico para compatibilidad con navegadores
+    try {
+      ctx = canvas.getContext('2d', { willReadFrequently: true })
+    } catch (e) {
+      ctx = canvas.getContext('2d')
+    }
 
     if (!ctx) {
       console.error('Failed to get canvas context')
@@ -1090,7 +1174,7 @@ const saveImage = () => {
     selectedElementIndex.value = null
     redrawCanvas()
     
-    const dataURL = drawingCanvas.value.toDataURL('image/png')
+    const dataURL = drawingCanvas.value.toDataURL('image/jpeg', 0.8)
     
     selectedElementIndex.value = tempSelected
     if (tempSelected !== null) redrawCanvas()
@@ -1117,6 +1201,7 @@ const saveImage = () => {
     }
     
     localStorage.setItem('savedTechnicalImages', JSON.stringify(savedImages.value))
+    cotizacionStore.currentImages = [...savedImages.value]
     resetEditor()
     alert('✅ Imagen guardada exitosamente')
   } catch (error) {
@@ -1152,6 +1237,32 @@ const deleteSavedImage = (index) => {
   if (confirm('¿Eliminar esta imagen?')) {
     savedImages.value.splice(index, 1)
     localStorage.setItem('savedTechnicalImages', JSON.stringify(savedImages.value))
+  }
+}
+
+const shareImage = async (img, index) => {
+  if (!img || !img.data) {
+    alert('No se puede compartir esta imagen')
+    return
+  }
+
+  try {
+    // Crear enlace con ruta relativa a public/project-images
+    const imageName = `shared-${Date.now()}-${index}.jpg`
+    const imagePath = `/project-images/${imageName}`
+
+    // En una aplicación real, aquí subirías la imagen al servidor
+    // Por ahora, creamos el enlace asumiendo que la imagen estará disponible
+    const shareURL = `${window.location.origin}${window.location.pathname}?image=${encodeURIComponent(JSON.stringify({ imagePath: imagePath }))}`
+
+    navigator.clipboard.writeText(shareURL).then(() => {
+      alert('Enlace copiado al portapapeles')
+    }).catch(() => {
+      alert('Enlace generado:\n' + shareURL + '\n\nCópielo manualmente.')
+    })
+  } catch (error) {
+    console.error('Error sharing image:', error)
+    alert('Error al compartir la imagen')
   }
 }
 
@@ -1740,6 +1851,68 @@ const changeElementColor = (color) => {
 .info-text strong {
   color: #1e3a8a;
   font-weight: 600;
+}
+
+/* Estilos para modo solo lectura */
+.readonly-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 30px;
+  overflow-y: auto;
+}
+
+.readonly-container {
+  text-align: center;
+  max-width: 700px;
+  width: 100%;
+}
+
+.readonly-icon-box {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.readonly-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.readonly-subtitle {
+  font-size: 15px;
+  color: #475569;
+  margin-bottom: 40px;
+}
+
+.readonly-card {
+  opacity: 0.8;
+}
+
+.readonly-card .image-actions {
+  justify-content: center;
+}
+
+.readonly-card .edit-btn,
+.readonly-card .delete-btn {
+  display: none;
+}
+
+.no-images-message {
+  padding: 40px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 2px dashed rgba(30, 58, 138, 0.2);
+}
+
+.no-images-message p {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {

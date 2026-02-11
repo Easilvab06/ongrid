@@ -118,8 +118,8 @@
   align-items: center;
   height: 100%;
   margin: 0;
-  column-count: 2;
-  column-gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .company-title {

@@ -13,7 +13,11 @@
     <div v-if="clientLink && !isSharedLink" class="link-section">
       <p>Link para el cliente (copia y comparte):</p>
       <input :value="clientLink" readonly class="link-input" />
-      <button @click="copyLink" class="copy-btn">Copiar Link</button>
+      <div class="share-buttons">
+        <button @click="copyLink" class="share-btn copy-btn">📋 Copiar Link</button>
+        <button @click="shareWhatsApp" class="share-btn whatsapp-btn">📱 WhatsApp</button>
+        <button @click="shareEmail" class="share-btn email-btn">✉️ Email</button>
+      </div>
     </div>
   </div>
 </template>
@@ -27,21 +31,78 @@ const clientLink = ref('')
 const isSharedLink = ref(false)
 
 const generateClientLink = () => {
+  // Obtener imágenes del store (incluye imágenes guardadas y no guardadas)
+  let images = cotizacionStore.currentImages || []
+
+  // Si no hay imágenes en el store, intentar obtenerlas de localStorage
+  if (images.length === 0) {
+    const saved = localStorage.getItem('savedTechnicalImages')
+    if (saved) {
+      try {
+        images = JSON.parse(saved)
+        console.log('Imágenes obtenidas de localStorage:', images.length)
+      } catch (e) {
+        images = []
+        console.error('Error parsing saved images from localStorage')
+      }
+    }
+  }
+
+  console.log('Generando enlace - Imágenes totales:', images.length)
+  console.log('Datos de imágenes:', images)
+
+  // Si no hay imágenes, mostrar alerta
+  if (images.length === 0) {
+    alert('⚠️ No hay imágenes disponibles. Por favor, guarda al menos una imagen en el editor antes de generar el enlace.')
+    return
+  }
+
+  // Guardar imágenes en localStorage para acceso inmediato del cliente
+  localStorage.setItem('sharedImages', JSON.stringify(images))
+  console.log('Imágenes guardadas en sharedImages para compartir:', images.length)
+
   const data = {
     consumo: cotizacionStore.consumo,
     radiacion: cotizacionStore.radiacion,
-    generacion: cotizacionStore.generacion
+    generacion: cotizacionStore.generacion,
+    images: images
   }
+
   const encoded = encodeURIComponent(JSON.stringify(data))
-  clientLink.value = `${window.location.origin}/SoinCalc/?data=${encoded}`
+  clientLink.value = `${window.location.origin}${window.location.pathname}?data=${encoded}`
+  console.log('Enlace generado:', clientLink.value)
+  console.log('Datos codificados:', data)
 }
 
 const copyLink = () => {
+  // Obtener imágenes del store y guardar en sharedImages
+  const images = cotizacionStore.currentImages || []
+
+  if (images.length > 0) {
+    localStorage.setItem('sharedImages', JSON.stringify(images))
+    console.log('Imágenes guardadas en sharedImages al copiar enlace:', images.length)
+  }
+
   navigator.clipboard.writeText(clientLink.value).then(() => {
     alert('Link copiado al portapapeles')
+    // Abrir el enlace en una nueva pestaña para mostrar las imágenes inmediatamente
+    window.open(clientLink.value, '_blank')
   }).catch(() => {
     alert('Error al copiar. Copia manualmente.')
   })
+}
+
+const shareWhatsApp = () => {
+  const message = `Hola, aquí tienes la cotización solar que solicitaste: ${clientLink.value}`
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`
+  window.open(whatsappUrl, '_blank')
+}
+
+const shareEmail = () => {
+  const subject = 'Cotización Solar - Soinsolar'
+  const body = `Hola,\n\nAquí tienes la cotización solar que solicitaste:\n\n${clientLink.value}\n\nSaludos,\nEquipo Soinsolar`
+  const emailUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  window.open(emailUrl, '_blank')
 }
 
 onMounted(() => {
@@ -62,7 +123,7 @@ const generatePDF = () => {
   import('jspdf').then((jsPDF) => {
     import('html2canvas').then((html2canvas) => {
       const element = document.querySelector('.pdf-preview')
-      html2canvas.default(element).then((canvas) => {
+      html2canvas.default(element, { allowTaint: true, useCORS: true }).then((canvas) => {
         const imgData = canvas.toDataURL('image/png')
         const doc = new jsPDF.default()
         const imgWidth = 210

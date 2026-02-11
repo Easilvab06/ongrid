@@ -1,44 +1,96 @@
 <template>
   <div class="panel3">
     <div class="panel-content">
-      <!-- Sección de entradas en dos columnas -->
-      <div class="inputs-container">
-        <!-- Entrada de Consumo -->
-        <div class="input-section">
-          <h3 class="section-title">Ingrese el Consumo del Cliente</h3>
-          <div class="input-group">
-            <input
-              v-model.number="consumoCliente"
-              @input="calcularResultados"
-              type="number"
-              placeholder="Ej: 212"
-              class="consumo-input"
-            />
-            <span class="input-unit">kWh/mes</span>
+      <!-- Layout principal: izquierda entradas, derecha gráfica -->
+      <div class="main-layout">
+        <!-- Panel izquierdo: entradas apiladas -->
+        <div class="left-panel">
+          <!-- Entrada de Consumo del Cliente -->
+          <div class="input-section">
+            <h3 class="section-title">Ingrese el Consumo del Cliente</h3>
+            <div class="input-group">
+              <input
+                v-model.number="consumoCliente"
+                @input="actualizarInstantaneo"
+                type="number"
+                placeholder="Ej: 800"
+                class="consumo-input"
+                :disabled="isSharedLink"
+              />
+              <span class="input-unit">kWh/mes</span>
+            </div>
           </div>
-          <p class="input-hint">Rango válido: 70 - 2,827 kWh/mes</p>
+
+          <!-- Entrada de Generación de la Planta -->
+          <div class="input-section">
+            <h3 class="section-title">Ingrese Generación de la Planta</h3>
+            <div class="input-group">
+              <input
+                v-model.number="generacionPlanta"
+                @input="actualizarInstantaneo"
+                type="number"
+                placeholder="Ej: 1000"
+                class="consumo-input"
+                :disabled="isSharedLink"
+              />
+              <span class="input-unit">kWh/mes</span>
+            </div>
+          </div>
+
+          <!-- Entrada de Adicionales -->
+          <div class="input-section" v-if="!isSharedLink">
+            <h3 class="section-title">Adicionales</h3>
+            <div class="input-group">
+              <span class="currency-symbol">$</span>
+              <input
+                v-model.number="adicionales"
+                @input="actualizarInstantaneo"
+                type="number"
+                placeholder="0"
+                class="adicionales-input"
+                min="0"
+              />
+            </div>
+            <p class="input-hint">Valor adicional al proyecto</p>
+          </div>
         </div>
 
-        <!-- Entrada de Adicionales -->
-        <div class="input-section">
-          <h3 class="section-title">Adicionales</h3>
-          <div class="input-group">
-            <span class="currency-symbol">$</span>
-            <input 
-              v-model.number="adicionales" 
-              @input="calcularResultados"
-              type="number" 
-              placeholder="0"
-              class="adicionales-input"
-              min="0"
-            />
+        <!-- Panel derecho: gráfica -->
+        <div class="right-panel">
+          <div class="grafica-section" v-if="porcentajeCobertura !== null">
+            <h3 class="section-title">Porcentaje de Cobertura</h3>
+            <div class="pie-chart-container">
+              <svg width="350" height="350" viewBox="0 0 200 200" class="pie-chart">
+                <!-- Círculo de fondo -->
+                <circle cx="100" cy="100" r="80" fill="none" :stroke="porcentajeCobertura >= 100 ? '#10b981' : '#e5e7eb'" stroke-width="20"/>
+                <!-- Arco del porcentaje cubierto -->
+                <path
+                  :d="arcoPorcentaje"
+                  fill="none"
+                  :stroke="porcentajeCobertura >= 100 ? '#10b981' : '#F5B027'"
+                  stroke-width="20"
+                  stroke-linecap="round"
+                />
+                <!-- Texto -->
+                <text x="100" y="95" text-anchor="middle" font-size="24" font-weight="bold" fill="#1f2937">{{ Math.round(porcentajeCobertura) }}%</text>
+                <text x="100" y="115" text-anchor="middle" font-size="14" fill="#6b7280">Cobertura</text>
+              </svg>
+            </div>
+            <p class="grafica-hint" v-if="porcentajeCobertura > 100">¡Exceso de generación! {{ Math.round(porcentajeCobertura - 100) }}% adicional</p>
           </div>
-          <p class="input-hint">Valor adicional al proyecto</p>
         </div>
       </div>
 
       <!-- Resultados dinámicos -->
       <div class="results-grid" v-if="resultados">
+        <div class="result-card">
+          <div class="result-icon">🌞</div>
+          <div class="result-content">
+            <div class="result-label">Generación de la Planta</div>
+            <div class="result-value">{{ resultados.generacion }} <span class="unit">kWh/mes</span></div>
+          </div>
+        </div>
+
         <div class="result-card">
           <div class="result-icon">📊</div>
           <div class="result-content">
@@ -81,7 +133,7 @@
               <span class="breakdown-separator">+</span>
               <span class="breakdown-item">Adicionales: {{ formatearMoneda(adicionales) }}</span>
             </div>
-            <div v-if="!isSharedLink" class="share-options">
+            <div class="share-options" v-if="!isSharedLink">
               <button @click="generarLink" class="share-btn clipboard-btn">
                 📋 Copiar Link
               </button>
@@ -109,7 +161,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useCotizacionStore } from '../store/cotizacion.js'
+
+const cotizacionStore = useCotizacionStore()
 
 // Datos extraídos del Excel
 const datosExcel = [
@@ -155,80 +210,116 @@ const datosExcel = [
   { nPaneles: 40, potencia: 24.8, generacion: 2827, area: 116, peso: 1200, valorTotal: 96720000 }
 ]
 
+// ESTADO REACTIVO
+const generacionPlanta = ref(null)
 const consumoCliente = ref(null)
 const adicionales = ref(0)
 const resultados = ref(null)
+const porcentajeCobertura = ref(null)
 const isSharedLink = ref(false)
 
-// Función equivalente a COINCIDIR de Excel
-const buscarCoincidencia = (valorBuscado) => {
-  // Buscar el valor más cercano menor o igual
+// Computed property para el arco del porcentaje
+const arcoPorcentaje = computed(() => {
+  if (porcentajeCobertura.value === null) return ''
+  const porcentaje = Math.min(porcentajeCobertura.value, 100)
+  const angulo = (porcentaje / 100) * 360
+  const radianes = (angulo - 90) * (Math.PI / 180)
+  const x = 100 + 80 * Math.cos(radianes)
+  const y = 100 + 80 * Math.sin(radianes)
+  const largeArcFlag = angulo > 180 ? 1 : 0
+  return `M100,20 A80,80 0 ${largeArcFlag},1 ${x},${y}`
+})
+
+// Función para buscar coincidencia por generación
+const buscarCoincidenciaPorGeneracion = (generacionBuscada) => {
   for (let i = datosExcel.length - 1; i >= 0; i--) {
-    if (datosExcel[i].generacion <= valorBuscado) {
+    if (datosExcel[i].generacion <= generacionBuscada) {
       return i
     }
   }
-  return 0 // Si no encuentra, devuelve el primero
+  return 0
 }
 
-// Calcular resultados basados en el consumo
-const calcularResultados = () => {
-  if (!consumoCliente.value || consumoCliente.value < 70) {
+// ✅ FUNCIÓN OPTIMIZADA: Actualizar Store instantáneamente
+const actualizarInstantaneo = () => {
+  console.log('⚡ Panel3 - Actualizando instantáneamente...')
+  
+  // Calcular resultados si hay generación
+  if (generacionPlanta.value) {
+    const indice = buscarCoincidenciaPorGeneracion(generacionPlanta.value)
+    const datos = datosExcel[indice]
+
+    const valorBase = datos.valorTotal
+    const valorAdicionales = adicionales.value || 0
+    const valorTotalConAdicionales = valorBase + valorAdicionales
+
+    resultados.value = {
+      generacion: generacionPlanta.value,
+      nPaneles: datos.nPaneles,
+      potencia: datos.potencia,
+      area: datos.area,
+      peso: datos.peso,
+      valorTotal: valorBase,
+      valorTotalConAdicionales: valorTotalConAdicionales
+    }
+
+    // ✅ ACTUALIZAR STORE INMEDIATAMENTE (Panel8 estará escuchando)
+    cotizacionStore.actualizarCostoTotal(valorTotalConAdicionales)
+    cotizacionStore.actualizarConsumo(consumoCliente.value)
+    cotizacionStore.actualizarGeneracion(generacionPlanta.value)
+    cotizacionStore.actualizarAdicionales(adicionales.value || 0)
+
+    console.log('✅ Store actualizado, Panel8 debería recalcular')
+  } else {
     resultados.value = null
-    return
+    cotizacionStore.actualizarCostoTotal(0)
   }
 
-  const indice = buscarCoincidencia(consumoCliente.value)
-  const datos = datosExcel[indice]
-
-  // Calcular valor total con adicionales
-  const valorBase = datos.valorTotal
-  const valorAdicionales = adicionales.value || 0
-  const valorTotalConAdicionales = valorBase + valorAdicionales
-
-  resultados.value = {
-    nPaneles: datos.nPaneles,
-    potencia: datos.potencia,
-    area: datos.area,
-    peso: datos.peso,
-    valorTotal: valorBase,
-    valorTotalConAdicionales: valorTotalConAdicionales
+  // Calcular porcentaje de cobertura si hay ambos valores
+  if (generacionPlanta.value && consumoCliente.value) {
+    const generacion = generacionPlanta.value
+    const consumo = consumoCliente.value
+    porcentajeCobertura.value = (generacion / consumo) * 100
+  } else {
+    porcentajeCobertura.value = null
   }
 }
 
 // Generar link para el cliente
 const generarLink = () => {
-  if (!consumoCliente.value) {
-    alert('Por favor ingrese un consumo válido antes de generar el link.')
+  if (!consumoCliente.value || !generacionPlanta.value) {
+    alert('Por favor ingrese un consumo y una generación válidos antes de generar el link.')
     return
   }
 
   const data = {
+    generacion: generacionPlanta.value,
     consumo: consumoCliente.value,
-    adicionales: adicionales.value || 0
+    adicionales: adicionales.value || 0,
+    userName: cotizacionStore.userName || 'Usuario'
   }
 
   const url = window.location.origin + window.location.pathname + '?data=' + encodeURIComponent(JSON.stringify(data))
 
-  // Copiar al portapapeles
   navigator.clipboard.writeText(url).then(() => {
     alert('Link copiado al portapapeles:\n' + url)
   }).catch(() => {
-    // Fallback si no se puede copiar
     alert('Link generado:\n' + url + '\n\nCópielo manualmente.')
   })
 }
 
 // Compartir por WhatsApp
 const compartirWhatsApp = () => {
-  if (!consumoCliente.value) {
-    alert('Por favor ingrese un consumo válido antes de compartir.')
+  if (!consumoCliente.value || !generacionPlanta.value) {
+    alert('Por favor ingrese un consumo y una generación válidos antes de compartir.')
     return
   }
 
   const data = {
+    generacion: generacionPlanta.value,
     consumo: consumoCliente.value,
-    adicionales: adicionales.value || 0
+    adicionales: adicionales.value || 0,
+    userName: cotizacionStore.userName || 'Usuario'
   }
 
   const url = window.location.origin + window.location.pathname + '?data=' + encodeURIComponent(JSON.stringify(data))
@@ -240,14 +331,16 @@ const compartirWhatsApp = () => {
 
 // Compartir por Email
 const compartirEmail = () => {
-  if (!consumoCliente.value) {
-    alert('Por favor ingrese un consumo válido antes de compartir.')
+  if (!consumoCliente.value || !generacionPlanta.value) {
+    alert('Por favor ingrese un consumo y una generación válidos antes de compartir.')
     return
   }
 
   const data = {
+    generacion: generacionPlanta.value,
     consumo: consumoCliente.value,
-    adicionales: adicionales.value || 0
+    adicionales: adicionales.value || 0,
+    userName: cotizacionStore.userName || 'Usuario'
   }
 
   const url = window.location.origin + window.location.pathname + '?data=' + encodeURIComponent(JSON.stringify(data))
@@ -275,9 +368,11 @@ onMounted(() => {
   if (urlParams.has('data')) {
     try {
       const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      generacionPlanta.value = data.generacion || null
       consumoCliente.value = data.consumo || null
       adicionales.value = data.adicionales || 0
-      calcularResultados()
+      cotizacionStore.userName = data.userName || 'Usuario'
+      actualizarInstantaneo()
     } catch (error) {
       console.error('Error loading data from URL:', error)
     }
@@ -323,18 +418,29 @@ onMounted(() => {
   z-index: 2;
 }
 
-/* Contenedor de entradas en dos columnas */
-.inputs-container {
+.main-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: 40px;
   margin-bottom: 40px;
   padding: 0 20px;
 }
 
-/* Sección de entrada */
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
 .input-section {
-  text-align: center;
+  text-align: left;
 }
 
 .section-title {
@@ -393,7 +499,7 @@ onMounted(() => {
   padding: 16px 24px 16px 50px;
   width: 100%;
   max-width: 280px;
-  text-align: right;
+  text-align: center;
   outline: none;
   transition: all 0.3s ease;
   background: rgba(16, 185, 129, 0.05);
@@ -428,7 +534,6 @@ onMounted(() => {
   min-height: 20px;
 }
 
-/* Grid de resultados */
 .results-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -525,7 +630,6 @@ onMounted(() => {
   margin-left: 4px;
 }
 
-/* Desglose del valor total */
 .breakdown {
   margin-top: 16px;
   display: flex;
@@ -550,7 +654,6 @@ onMounted(() => {
   font-size: 16px;
 }
 
-/* Opciones de compartir */
 .share-options {
   margin-top: 20px;
   display: flex;
@@ -613,7 +716,6 @@ onMounted(() => {
   border-color: rgba(59, 130, 246, 0.5);
 }
 
-/* Sin resultados */
 .no-results {
   text-align: center;
   padding: 60px 20px;
@@ -631,7 +733,6 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* Decoración de fondo */
 .panel-glow {
   position: absolute;
   top: -50%;
@@ -647,7 +748,6 @@ onMounted(() => {
   pointer-events: none;
 }
 
-/* Animaciones */
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -675,16 +775,33 @@ onMounted(() => {
   to { transform: rotate(360deg); }
 }
 
-/* Responsive */
+.grafica-section {
+  text-align: center;
+}
+
+.pie-chart-container {
+  margin: 20px 0;
+}
+
+.grafica-hint {
+  font-size: 14px;
+  color: #10b981;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
 @media (max-width: 968px) {
-  .inputs-container {
+  .main-layout {
     grid-template-columns: 1fr;
     gap: 30px;
   }
 
-  .currency-symbol {
-    transform: translateX(-50%);
-    margin-left: -110px;
+  .left-panel {
+    gap: 20px;
+  }
+
+  .right-panel {
+    min-height: 300px;
   }
 
   .results-grid {
@@ -695,10 +812,6 @@ onMounted(() => {
 @media (max-width: 768px) {
   .panel3 {
     padding: 24px;
-  }
-
-  .inputs-container {
-    padding: 0;
   }
 
   .section-title {
@@ -764,6 +877,18 @@ onMounted(() => {
     padding: 16px;
   }
 
+  .main-layout {
+    gap: 20px;
+  }
+
+  .left-panel {
+    gap: 20px;
+  }
+
+  .right-panel {
+    min-height: 250px;
+  }
+
   .section-title {
     font-size: 16px;
     min-height: 40px;
@@ -786,6 +911,11 @@ onMounted(() => {
 
   .input-unit {
     font-size: 14px;
+  }
+
+  .pie-chart-container svg {
+    width: 180px;
+    height: 180px;
   }
 
   .results-grid {

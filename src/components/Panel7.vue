@@ -754,6 +754,19 @@ const clearRecords = async () => {
   gap: 24px;
 }
 
+/* Responsive panel content */
+@media (max-width: 768px) {
+  .panel-content {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-content {
+    gap: 16px;
+  }
+}
+
 .panel-title {
   font-size: 36px;
   font-weight: 700;
@@ -771,6 +784,27 @@ const clearRecords = async () => {
   margin: 0;
   text-align: center;
   font-weight: 500;
+}
+
+/* Responsive title and subtitle */
+@media (max-width: 768px) {
+  .panel-title {
+    font-size: 28px;
+  }
+
+  .panel-subtitle {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-title {
+    font-size: 24px;
+  }
+
+  .panel-subtitle {
+    font-size: 14px;
+  }
 }
 
 .social-card {
@@ -1022,6 +1056,27 @@ const clearRecords = async () => {
 .proyectos-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(245, 176, 39, 0.6);
+}
+
+/* Responsive buttons */
+@media (max-width: 768px) {
+  .contact-button,
+  .proyectos-button {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    margin-top: 40px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .proyectos-button {
+    margin-bottom: 20px;
+  }
 }
 
 .contact-form-overlay {
@@ -1530,5 +1585,25 @@ const clearRecords = async () => {
     0 4px 15px rgba(220, 38, 38, 0.3),
     0 2px 10px rgba(220, 38, 38, 0.2),
     inset 0 1px 3px rgba(255, 255, 255, 0.2);
+}
+
+/* Pie Chart Styles */
+.pie-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(245, 176, 39, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: slideInUp 0.6s ease-out;
+}
+
+.pie-chart {
+  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));
 }
 </style>

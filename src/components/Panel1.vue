@@ -130,9 +130,15 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useCotizacionStore } from '../store/cotizacion.js'
+
+const cotizacionStore = useCotizacionStore()
 
 // Estado del nombre del usuario
-const userName = ref('')
+const userName = computed({
+  get: () => cotizacionStore.userName,
+  set: (value) => { cotizacionStore.userName = value }
+})
 const isEditing = ref(false)
 const nameInput = ref(null)
 

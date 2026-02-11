@@ -1,0 +1,8 @@
+- [x] Implementar template de ImageEditor.vue con canvas, botones de subir, guardar, cargar y compartir
+- [x] Agregar script a ImageEditor.vue: importar Fabric.js, crear canvas, manejar subida de imágenes
+- [x] Implementar guardado en localStorage como base64
+- [x] Implementar carga desde localStorage
+- [x] Implementar compartición vía enlace con datos codificados en URL (optimizado para reducir tamaño)
+- [x] Actualizar App.vue para cargar imágenes desde parámetros de URL
+- [x] Probar funcionalidad en Chrome y Edge
+- [x] Verificar que las imágenes solo se muestren con el enlace

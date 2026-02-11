@@ -122,7 +122,8 @@ export default {
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  grid-column: span 2;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @keyframes slideInUp {
@@ -580,63 +581,63 @@ export default {
 
 @media (max-width: 768px) {
   .panel-header {
-    padding: 20px;
+    padding: 16px 12px;
     flex-direction: column;
     text-align: center;
   }
 
   .header-content {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
 
   .arrow-wrapper {
     position: static;
     margin-left: 0;
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .panel-title {
-    font-size: 18px;
+    font-size: 16px;
   }
 
   .panel-subtitle {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .components-container {
     grid-template-columns: 1fr;
-    padding: 20px;
-    gap: 16px;
+    padding: 16px;
+    gap: 12px;
   }
 
   .component-card {
-    padding: 16px;
-    min-height: 120px;
+    padding: 12px;
+    min-height: 100px;
   }
 
   .component-number {
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
   }
 
   .number-text {
-    font-size: 18px;
-  }
-
-  .component-name {
     font-size: 14px;
   }
 
+  .component-name {
+    font-size: 12px;
+  }
+
   .component-description {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .icon-bubble {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
-    top: -12px;
-    right: -12px;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    top: -8px;
+    right: -8px;
   }
 }
 
@@ -773,79 +774,81 @@ export default {
 
 @media (max-width: 360px) {
   .panel-container {
-    border-radius: 10px;
+    border-radius: 8px;
+    overflow: visible;
   }
 
   .panel-header {
-    padding: 14px 12px;
+    padding: 10px 8px;
   }
 
   .panel-title {
-    font-size: 14px;
-  }
-
-  .panel-subtitle {
-    font-size: 9px;
-  }
-
-  .arrow-wrapper {
-    width: 35px;
-    height: 35px;
-  }
-
-  .arrow-icon {
-    width: 18px;
-    height: 18px;
-  }
-
-  .components-container {
-    padding: 12px;
-    gap: 10px;
-  }
-
-  .component-card {
-    padding: 10px;
-    border-radius: 8px;
-    min-height: 90px;
-  }
-
-  .card-content {
-    gap: 10px;
-  }
-
-  .component-number {
-    width: 35px;
-    height: 35px;
-  }
-
-  .number-text {
     font-size: 12px;
   }
 
+  .panel-subtitle {
+    font-size: 7px;
+  }
+
+  .arrow-wrapper {
+    width: 28px;
+    height: 28px;
+    right: 8px;
+  }
+
+  .arrow-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .components-container {
+    padding: 8px;
+    gap: 6px;
+  }
+
+  .component-card {
+    padding: 6px;
+    border-radius: 4px;
+    min-height: 70px;
+  }
+
+  .card-content {
+    gap: 6px;
+  }
+
+  .component-number {
+    width: 25px;
+    height: 25px;
+  }
+
+  .number-text {
+    font-size: 9px;
+  }
+
   .component-name {
-    font-size: 11px;
+    font-size: 9px;
   }
 
   .component-description {
-    font-size: 8px;
+    font-size: 6px;
   }
 
   .icon-bubble {
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
-    top: -6px;
-    right: -6px;
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+    top: -4px;
+    right: -4px;
   }
 
   .blob-1 {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
   }
 
   .blob-2 {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
   }
 }
 

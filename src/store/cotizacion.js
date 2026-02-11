@@ -2,11 +2,18 @@ import { defineStore } from 'pinia'
 
 export const useCotizacionStore = defineStore('cotizacion', {
   state: () => ({
-    consumo: 300,
+    consumo: 1000,
     radiacion: 4.5,
     generacion: 0,
     imagen: null,
-    registros: []
+    registros: [],
+    userName: '',
+    currentImages: [],
+    valorTotalProyecto: 0,
+    costoTotal: 0,
+    consumoCliente: 0,
+    tarifaElectricidad: 1000,
+    incrementoAnual: 2
   }),
 
   actions: {
@@ -16,6 +23,24 @@ export const useCotizacionStore = defineStore('cotizacion', {
 
     setImagen(img) {
       this.imagen = img
+    },
+
+    // ✅ NUEVAS ACCIONES PARA PANEL8
+    actualizarCostoTotal(costo) {
+      this.costoTotal = costo
+      this.valorTotalProyecto = costo
+    },
+
+    actualizarConsumo(consumo) {
+      this.consumoCliente = consumo
+    },
+
+    actualizarGeneracion(generacion) {
+      this.generacion = generacion
+    },
+
+    actualizarAdicionales(adicionales) {
+      this.adicionales = adicionales
     },
 
     // Cargar registros desde localStorage

@@ -30,7 +30,7 @@
         <Panel2 />
          <Panel3 />
         <Panel8 class="full-width"/>
-         <Panel4 class="full-width"/>
+         <Panel4/>
           <Panel5/>
           <Panel7 />
 
@@ -69,6 +69,10 @@ onMounted(() => {
   if (urlParams.has('data')) {
     try {
       const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      cotizacionStore.consumo = data.consumo || 300
+      cotizacionStore.radiacion = data.radiacion || 4.5
+      cotizacionStore.generacion = data.generacion || 0
+      cotizacionStore.calcular()
 
       // Guardar imágenes en localStorage temporal para que Panel5 las pueda cargar
       if (data.images && Array.isArray(data.images) && data.images.length > 0) {
@@ -93,6 +97,24 @@ onMounted(() => {
   z-index: 10;
   min-height: 100vh;
   overflow: hidden; /* Prevent layout shifts from animations */
+  transform-origin: top center;
+}
+
+/* Mobile zoom: 75% */
+@media (max-width: 768px) {
+  .app-wrapper {
+    transform: scale(0.75);
+    transform-origin: top center;
+    width: calc(100% / 0.75);
+    min-height: calc(100vh / 0.75);
+  }
+}
+
+/* Desktop zoom: 100% */
+@media (min-width: 769px) {
+  .app-wrapper {
+    transform: scale(1);
+  }
 }
 
 .particles {
@@ -172,9 +194,9 @@ onMounted(() => {
 .container {
   position: relative;
   z-index: 10;
-  max-width: 110rem;
+  max-width: 80rem;
   margin: 0 auto;
-  padding: 64px 32px;
+  padding: 40px 20px;
   animation: fadeIn 0.8s ease-out;
   width: 100%;
   box-sizing: border-box;
@@ -291,73 +313,186 @@ onMounted(() => {
 
 /* ========== RESPONSIVE BREAKPOINTS ========== */
 
-/* Desktop Large (>1200px) */
-@media (max-width: 1200px) {
+/* ULTRA MÓVIL (360px) */
+@media (max-width: 360px) {
   .container {
-    padding: 32px 20px;
-  }
-
-  .panels-grid {
-    gap: 18px;
-  }
-
-  .grid {
-    gap: 28px;
-  }
-}
-
-/* Desktop (1024px - 1200px) */
-@media (max-width: 1024px) {
-  .container {
-    padding: 24px 16px;
+    padding: 12px 8px;
+    max-width: 100%;
   }
 
   .header {
-    margin-bottom: 28px;
+    margin-bottom: 16px;
   }
 
   .title {
-    font-size: 36px;
+    font-size: 20px;
   }
 
   .subtitle {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .logo-box {
-    padding: 16px 32px;
-    gap: 16px;
+    padding: 10px 16px;
+    gap: 10px;
+    flex-direction: column;
   }
 
   .icon-solar {
-    width: 64px;
-    height: 64px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .icon-solar svg {
+    width: 18px;
+    height: 18px;
   }
 
   .header-decoration {
-    width: 160px;
+    width: 70px;
+    height: 2px;
+  }
+
+  .panels-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .grid > :nth-child(3) {
+    grid-column: 1;
+  }
+
+  .particles {
+    display: none;
+  }
+}
+
+/* MÓVIL PEQUEÑO (480px) */
+@media (min-width: 361px) and (max-width: 480px) {
+  .container {
+    padding: 10px 8px;
+  }
+
+  .header {
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .logo-box {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+
+  .icon-solar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .icon-solar svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .header-decoration {
+    width: 80px;
+    height: 2px;
+  }
+
+  .panels-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .grid > :nth-child(3) {
+    grid-column: 1;
+  }
+
+  .particles {
+    display: none;
+  }
+}
+
+/* MÓVIL GRANDE (640px) */
+@media (min-width: 481px) and (max-width: 640px) {
+  .container {
+    padding: 16px 12px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 30px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .logo-box {
+    padding: 14px 28px;
+    gap: 14px;
+  }
+
+  .icon-solar {
+    width: 44px;
+    height: 44px;
+  }
+
+  .icon-solar svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .header-decoration {
+    width: 110px;
     height: 3px;
   }
 
   .panels-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+    margin-bottom: 24px;
   }
 
   .grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 18px;
   }
 
   .grid > :nth-child(3) {
     grid-column: 1;
   }
+
+  .particles {
+    display: none;
+  }
 }
 
-/* Tablet (768px - 1024px) */
-@media (max-width: 768px) {
+/* TABLET (768px) */
+@media (min-width: 641px) and (max-width: 1024px) {
   .container {
-    padding: 20px 16px;
+    padding: 16px 12px;
     max-width: 100%;
   }
 
@@ -379,8 +514,13 @@ onMounted(() => {
   }
 
   .icon-solar {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .icon-solar svg {
+    width: 24px;
+    height: 24px;
   }
 
   .header-decoration {
@@ -390,145 +530,22 @@ onMounted(() => {
 
   .panels-grid {
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 16px;
   }
 
   .grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 24px;
+  }
+
+  .grid > :nth-child(3) {
+    grid-column: 1;
   }
 }
 
-/* Mobile Large (640px - 768px) */
-@media (max-width: 640px) {
-  .container {
-    padding: 16px 12px;
-  }
-
-  .header {
-    margin-bottom: 20px;
-  }
-
-  .title {
-    font-size: 24px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-  }
-
-  .logo-box {
-    flex-direction: column;
-    padding: 14px 20px;
-    gap: 10px;
-    text-align: center;
-  }
-
-  .icon-solar {
-    width: 50px;
-    height: 50px;
-  }
-
-  .header-decoration {
-    width: 100px;
-    height: 3px;
-  }
-
-  .panels-grid {
-    gap: 12px;
-  }
-
-  .grid {
-    gap: 18px;
-  }
-}
-
-/* Mobile (480px - 640px) */
-@media (max-width: 480px) {
-  .container {
-    padding: 12px 8px;
-  }
-
-  .header {
-    margin-bottom: 16px;
-  }
-
-  .title {
-    font-size: 20px;
-  }
-
-  .subtitle {
-    font-size: 11px;
-  }
-
-  .logo-box {
-    padding: 10px 16px;
-    gap: 8px;
-  }
-
-  .icon-solar {
-    width: 40px;
-    height: 40px;
-  }
-
-  .header-decoration {
-    width: 80px;
-    height: 2px;
-  }
-
-  .panels-grid {
-    gap: 10px;
-  }
-
-  .grid {
-    gap: 14px;
-  }
-
-  .particles {
-    display: none;
-  }
-}
-
-/* Mobile Small (360px - 480px) */
-@media (max-width: 360px) {
-  .container {
-    padding: 10px 6px;
-  }
-
-  .header {
-    margin-bottom: 12px;
-  }
-
-  .title {
-    font-size: 18px;
-  }
-
-  .subtitle {
-    font-size: 10px;
-  }
-
-  .logo-box {
-    padding: 8px 12px;
-    gap: 6px;
-  }
-
-  .icon-solar {
-    width: 32px;
-    height: 32px;
-  }
-
-  .header-decoration {
-    width: 60px;
-    height: 2px;
-  }
-
-  .panels-grid {
-    gap: 8px;
-  }
-
-  .grid {
-    gap: 12px;
-  }
+/* DESKTOP (1024px+) */
+@media (min-width: 1025px) {
+  /* Mantiene estilos originales */
 }
 
 @keyframes fadeIn {
