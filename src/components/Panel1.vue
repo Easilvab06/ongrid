@@ -130,9 +130,15 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useCotizacionStore } from '../store/cotizacion.js'
+
+const cotizacionStore = useCotizacionStore()
 
 // Estado del nombre del usuario
-const userName = ref('')
+const userName = computed({
+  get: () => cotizacionStore.userName,
+  set: (value) => { cotizacionStore.userName = value }
+})
 const isEditing = ref(false)
 const nameInput = ref(null)
 
@@ -193,14 +199,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
 
 @reference "tailwindcss";
 
 .panel1 {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border-radius: 16px;
-  @apply p-0 shadow-lg min-h-[500px] h-full flex flex-col col-span-2 font-['Inter'];
+  @apply p-0 shadow-lg min-h-[500px] h-full flex flex-col col-span-2 font-['Montserrat'];
 }
 
 .panel-content {

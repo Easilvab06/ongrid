@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Soinsolar — Acceso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold:    #F5B027;
+    --gold-2:  #E89B1C;
+    --gold-3:  #ffd97a;
+    --navy:    #1f2c51;
+    --navy-2:  #2d3f6e;
+    --navy-3:  #0d1a38;
+    --cream:   #fffaf0;
+    --white:   #ffffff;
+    --error:   #ef4444;
+    --success: #10b981;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    font-family: 'Outfit', sans-serif;
+    background: var(--navy-3);
+    overflow: hidden;
+  }
+
+  /* ══════════════════════════════════
+     BACKGROUND SOLAR SCENE
+  ══════════════════════════════════ */
+  .bg {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 140% 90% at 50% 110%,
+      #0d1a38 0%, #1a2b52 40%, #0a1228 100%);
+    overflow: hidden;
+  }
+
+  /* Horizon glow */
+  .horizon {
+    position: absolute;
+    bottom: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180%;
+    height: 55%;
+    background: radial-gradient(ellipse 80% 50% at 50% 100%,
+      rgba(245,176,39,0.18) 0%,
+      rgba(232,155,28,0.08) 40%,
+      transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Stars */
+  .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 12%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 82% 8%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 20%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 68% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 5%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 33% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 62% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 5% 70%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 95% 65%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  }
+
+  /* Animated sun */
+  .sun-wrap {
+    position: absolute;
+    bottom: 28%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sun-core {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%,
+      #fff7d6 0%, #ffd760 30%, var(--gold) 60%, var(--gold-2) 100%);
+    box-shadow:
+      0 0 0 12px rgba(245,176,39,0.08),
+      0 0 0 28px rgba(245,176,39,0.05),
+      0 0 60px rgba(245,176,39,0.45),
+      0 0 120px rgba(245,176,39,0.20),
+      0 0 200px rgba(245,176,39,0.10);
+    animation: sun-pulse 4s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes sun-pulse {
+    0%,100% { box-shadow: 0 0 0 12px rgba(245,176,39,0.08), 0 0 0 28px rgba(245,176,39,0.05), 0 0 60px rgba(245,176,39,0.45), 0 0 120px rgba(245,176,39,0.20), 0 0 200px rgba(245,176,39,0.10); }
+    50%      { box-shadow: 0 0 0 16px rgba(245,176,39,0.12), 0 0 0 36px rgba(245,176,39,0.07), 0 0 80px rgba(245,176,39,0.55), 0 0 160px rgba(245,176,39,0.25), 0 0 240px rgba(245,176,39,0.12); }
+  }
+
+  /* Sun rays SVG */
+  .sun-rays {
+    position: absolute;
+    width: 260px; height: 260px;
+    animation: spin-rays 20s linear infinite;
+    z-index: 1;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  @keyframes spin-rays {
+    from { transform: translate(-50%,-50%) rotate(0deg); }
+    to   { transform: translate(-50%,-50%) rotate(360deg); }
+  }
+
+  /* Floating solar panels */
+  .panels-row {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+  }
+
+  .panel-shape {
+    width: 52px; height: 36px;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    border: 1px solid rgba(96,165,250,0.4);
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 12px rgba(59,130,246,0.2);
+    transform-origin: bottom center;
+  }
+
+  .panel-shape::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    border-radius: 2px;
+    opacity: 0.6;
+  }
+
+  .panel-shape::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 1px;
+    background: rgba(147,197,253,0.4);
+  }
+
+  .panel-shape:nth-child(1) { transform: perspective(200px) rotateX(20deg); animation: panel-gleam 3s ease-in-out infinite 0s; }
+  .panel-shape:nth-child(2) { transform: perspective(200px) rotateX(22deg); animation: panel-gleam 3s ease-in-out infinite 0.4s; }
+  .panel-shape:nth-child(3) { transform: perspective(200px) rotateX(20deg); animation: panel-gleam 3s ease-in-out infinite 0.8s; }
+  .panel-shape:nth-child(4) { transform: perspective(200px) rotateX(18deg); animation: panel-gleam 3s ease-in-out infinite 1.2s; }
+  .panel-shape:nth-child(5) { transform: perspective(200px) rotateX(22deg); animation: panel-gleam 3s ease-in-out infinite 1.6s; }
+
+  @keyframes panel-gleam {
+    0%,100% { box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 12px rgba(59,130,246,0.2); }
+    50%      { box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 20px rgba(245,176,39,0.35); }
+  }
+
+  /* Ground line */
+  .ground {
+    position: absolute;
+    bottom: 10%;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(245,176,39,0.25) 20%, rgba(245,176,39,0.5) 50%, rgba(245,176,39,0.25) 80%, transparent 100%);
+  }
+
+  /* Energy particles */
+  .particles {
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: float-particle linear infinite;
+    opacity: 0;
+  }
+
+  .particle:nth-child(1)  { left: 48%; bottom: 28%; animation-duration: 6s; animation-delay: 0s;   width:3px; height:3px; }
+  .particle:nth-child(2)  { left: 50%; bottom: 28%; animation-duration: 8s; animation-delay: 1s;   width:2px; height:2px; background: #fff7d6; }
+  .particle:nth-child(3)  { left: 52%; bottom: 28%; animation-duration: 7s; animation-delay: 2s;   }
+  .particle:nth-child(4)  { left: 47%; bottom: 28%; animation-duration: 9s; animation-delay: 3s;   width:2px; height:2px; }
+  .particle:nth-child(5)  { left: 53%; bottom: 28%; animation-duration: 5s; animation-delay: 0.5s; width:3px; height:3px; background: #fff7d6; }
+  .particle:nth-child(6)  { left: 49%; bottom: 28%; animation-duration: 10s; animation-delay: 4s;  width:2px; height:2px; }
+
+  @keyframes float-particle {
+    0%   { transform: translate(0, 0) scale(1);     opacity: 0; }
+    10%  { opacity: 0.9; }
+    80%  { opacity: 0.4; }
+    100% { transform: translate(calc(-30px + 60px * var(--rx,0.5)), -280px) scale(0.3); opacity: 0; }
+  }
+
+  .particle:nth-child(1) { --rx: 0.2; }
+  .particle:nth-child(2) { --rx: 0.8; }
+  .particle:nth-child(3) { --rx: 0.5; }
+  .particle:nth-child(4) { --rx: 0.3; }
+  .particle:nth-child(5) { --rx: 0.7; }
+  .particle:nth-child(6) { --rx: 0.45; }
+
+  /* ══════════════════════════════════
+     MAIN LAYOUT
+  ══════════════════════════════════ */
+  .page {
+    position: relative; z-index: 10;
+    width: 100%; height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* ══════════════════════════════════
+     CARD
+  ══════════════════════════════════ */
+  .card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(15, 25, 55, 0.75);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(245,176,39,0.20);
+    border-radius: 24px;
+    padding: 44px 40px 40px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.04) inset,
+      0 32px 80px rgba(0,0,0,0.55),
+      0 0 60px rgba(245,176,39,0.06);
+    animation: card-in 0.9s cubic-bezier(0.34,1.4,0.64,1) both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,176,39,0.6), transparent);
+  }
+
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+
+  /* ── Logo area ── */
+  .logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    animation: fade-down 0.7s ease both 0.15s;
+  }
+
+  @keyframes fade-down {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-icon {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-2));
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 28px rgba(245,176,39,0.40), 0 0 0 1px rgba(245,176,39,0.2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .logo-icon::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+  }
+
+  .logo-icon svg { width: 30px; height: 30px; position: relative; z-index: 1; }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+
+  .brand-name span { color: var(--gold); }
+
+  .brand-tag {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── Form ── */
+  .form-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    margin-bottom: 28px;
+    animation: fade-down 0.7s ease both 0.25s;
+  }
+
+  .field {
+    margin-bottom: 18px;
+    animation: fade-up 0.6s ease both;
+  }
+
+  .field:nth-child(1) { animation-delay: 0.3s; }
+  .field:nth-child(2) { animation-delay: 0.4s; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .field label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 8px;
+    padding-left: 2px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 16px;
+    color: rgba(245,176,39,0.5);
+    transition: color 0.3s;
+    pointer-events: none;
+    display: flex;
+  }
+
+  .input-wrap:focus-within .input-icon { color: var(--gold); }
+
+  .field input {
+    width: 100%;
+    height: 52px;
+    padding: 0 44px 0 44px;
+    background: rgba(255,255,255,0.055);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 13px;
+    color: var(--white);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    outline: none;
+    transition: all 0.3s ease;
+    letter-spacing: 0.2px;
+  }
+
+  .field input::placeholder { color: rgba(255,255,255,0.22); }
+
+  .field input:focus {
+    background: rgba(245,176,39,0.07);
+    border-color: rgba(245,176,39,0.5);
+    box-shadow: 0 0 0 3px rgba(245,176,39,0.10), 0 4px 16px rgba(0,0,0,0.2);
+  }
+
+  .toggle-pw {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .toggle-pw:hover { color: var(--gold); }
+
+  /* Error state */
+  .field.error input {
+    border-color: rgba(239,68,68,0.6);
+    background: rgba(239,68,68,0.06);
+  }
+
+  .field-error {
+    font-size: 11px;
+    color: #fca5a5;
+    margin-top: 6px;
+    padding-left: 2px;
+    display: none;
+    animation: shake 0.35s ease;
+  }
+
+  .field.error .field-error { display: block; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25%      { transform: translateX(-4px); }
+    75%      { transform: translateX( 4px); }
+  }
+
+  /* ── Options row ── */
+  .options-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    animation: fade-up 0.6s ease both 0.45s;
+  }
+
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .remember input[type="checkbox"] { display: none; }
+
+  .checkmark {
+    width: 18px; height: 18px;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s;
+    flex-shrink: 0;
+  }
+
+  .remember input:checked ~ .checkmark {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .remember input:checked ~ .checkmark::after {
+    content: '';
+    width: 5px; height: 9px;
+    border: 2px solid var(--navy-3);
+    border-top: none; border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+    display: block;
+  }
+
+  .remember span:last-child {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+    font-weight: 400;
+  }
+
+  .forgot {
+    font-size: 13px;
+    color: rgba(245,176,39,0.7);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .forgot:hover { color: var(--gold); }
+
+  /* ── Submit button ── */
+  .submit-btn {
+    width: 100%;
+    height: 54px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-2) 100%);
+    border: none;
+    border-radius: 14px;
+    color: var(--navy-3);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 28px rgba(245,176,39,0.35), 0 2px 6px rgba(0,0,0,0.2);
+    animation: fade-up 0.6s ease both 0.5s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .submit-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px rgba(245,176,39,0.45), 0 4px 12px rgba(0,0,0,0.25);
+  }
+
+  .submit-btn:hover::before { opacity: 1; }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  /* Loading state */
+  .submit-btn.loading .btn-text { display: none; }
+  .submit-btn.loading .btn-spinner { display: flex; }
+  .btn-spinner { display: none; align-items: center; gap: 8px; }
+  .spinner-ring {
+    width: 20px; height: 20px;
+    border: 2.5px solid rgba(31,44,81,0.3);
+    border-top-color: var(--navy-3);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Divider ── */
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 22px 0;
+    animation: fade-up 0.6s ease both 0.55s;
+  }
+
+  .divider-line {
+    flex: 1; height: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .divider span {
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── Hint ── */
+  .hint {
+    text-align: center;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.3);
+    animation: fade-up 0.6s ease both 0.6s;
+    line-height: 1.6;
+  }
+
+  .hint strong {
+    color: rgba(245,176,39,0.8);
+    font-weight: 600;
+  }
+
+  /* ── Success overlay ── */
+  .success-overlay {
+    position: absolute; inset: 0;
+    background: rgba(15, 25, 55, 0.95);
+    border-radius: 24px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 20;
+    gap: 16px;
+  }
+
+  .success-overlay.show { opacity: 1; pointer-events: all; }
+
+  .success-circle {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 10px rgba(16,185,129,0.12), 0 0 40px rgba(16,185,129,0.3);
+    animation: pop 0.5s cubic-bezier(0.34,1.6,0.64,1) both;
+  }
+
+  @keyframes pop {
+    from { transform: scale(0); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+
+  .success-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .success-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.35);
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: #fca5a5;
+    font-size: 13.5px;
+    font-weight: 500;
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    transition: all 0.35s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 100;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── Footer ── */
+  .footer-note {
+    position: fixed;
+    bottom: 16px; left: 0; right: 0;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255,255,255,0.18);
+    letter-spacing: 0.5px;
+    animation: fade-up 1s ease both 1s;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .card { padding: 36px 28px 32px; }
+    .brand-name { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="bg">
+  <div class="stars"></div>
+  <div class="horizon"></div>
+
+  <!-- Sun -->
+  <div class="sun-wrap">
+    <svg class="sun-rays" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.35">
+        <line x1="130" y1="10" x2="130" y2="30" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="130" y1="230" x2="130" y2="250" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="10" y1="130" x2="30" y2="130" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="230" y1="130" x2="250" y2="130" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="43.7" y1="43.7" x2="57.9" y2="57.9" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="202.1" y1="202.1" x2="216.3" y2="216.3" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="216.3" y1="43.7" x2="202.1" y2="57.9" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="57.9" y1="202.1" x2="43.7" y2="216.3" stroke="#F5B027" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </svg>
+    <div class="sun-core"></div>
+  </div>
+
+  <!-- Solar panels row -->
+  <div class="panels-row">
+    <div class="panel-shape"></div>
+    <div class="panel-shape"></div>
+    <div class="panel-shape"></div>
+    <div class="panel-shape"></div>
+    <div class="panel-shape"></div>
+  </div>
+
+  <div class="ground"></div>
+
+  <!-- Particles -->
+  <div class="particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="page">
+  <div class="card" id="card">
+
+    <!-- Success overlay -->
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-circle">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+          <path d="M5 13l4 4L19 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="success-text">¡Bienvenido!</div>
+      <div class="success-sub">Redirigiendo al sistema…</div>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-area">
+      <div class="logo-icon">
+        <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="15" cy="15" r="7" fill="#1f2c51"/>
+          <circle cx="15" cy="15" r="4.5" fill="#1f2c51" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+          <line x1="15" y1="2" x2="15" y2="6"  stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="15" y1="24" x2="15" y2="28" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="2" y1="15" x2="6"  y2="15"  stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="24" y1="15" x2="28" y2="15" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="5.8" y1="5.8" x2="8.6" y2="8.6"  stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="21.4" y1="21.4" x2="24.2" y2="24.2" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="24.2" y1="5.8" x2="21.4" y2="8.6"  stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="8.6" y1="21.4" x2="5.8" y2="24.2"  stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-name">Soin<span>solar</span></div>
+      <div class="brand-tag">Portal de Cotizaciones</div>
+    </div>
+
+    <!-- Form title -->
+    <div class="form-title">Ingresa tus credenciales para continuar</div>
+
+    <!-- Form -->
+    <form id="loginForm" novalidate>
+      <!-- Usuario -->
+      <div class="field" id="fieldUser">
+        <label for="username">Usuario</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <input type="text" id="username" name="username" placeholder="Tu nombre de usuario" autocomplete="username"/>
+        </div>
+        <div class="field-error" id="errUser">Ingresa un usuario válido</div>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="field" id="fieldPass">
+        <label for="password">Contraseña</label>
+        <div class="input-wrap">
+          <span class="input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+          <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password"/>
+          <button type="button" class="toggle-pw" id="togglePw" aria-label="Ver contraseña">
+            <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="field-error" id="errPass">Ingresa tu contraseña</div>
+      </div>
+
+      <!-- Options -->
+      <div class="options-row">
+        <label class="remember">
+          <input type="checkbox" id="remember"/>
+          <span class="checkmark"></span>
+          <span>Recordarme</span>
+        </label>
+        <a href="#" class="forgot">¿Olvidaste tu clave?</a>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="btn-text">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          Ingresar al sistema
+        </span>
+        <div class="btn-spinner">
+          <div class="spinner-ring"></div>
+          <span>Verificando…</span>
+        </div>
+      </button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span>acceso seguro</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="hint">
+        ¿Necesitas acceso? Contacta a<br/>
+        <strong>admin@soinsolar.com</strong>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">Usuario o contraseña incorrectos</div>
+
+<!-- Footer -->
+<div class="footer-note">© 2025 Soinsolar S.A.S — Todos los derechos reservados</div>
+
+<script>
+  /* ── Credenciales (demo) ───────────────────────── */
+  const CREDENTIALS = [
+    { user: 'soinsolar', pass: 'solar2024' },
+    { user: 'admin',     pass: 'admin123'  },
+    { user: 'demo',      pass: 'demo'      },
+  ];
+
+  const REDIRECT_URL = 'https://easilvab06.github.io/Grid-tied/';
+
+  /* ── Elementos ─────────────────────────────────── */
+  const form          = document.getElementById('loginForm');
+  const submitBtn     = document.getElementById('submitBtn');
+  const successOverlay= document.getElementById('successOverlay');
+  const toast         = document.getElementById('toast');
+  const togglePw      = document.getElementById('togglePw');
+  const pwInput       = document.getElementById('password');
+  const userInput     = document.getElementById('username');
+  const fieldUser     = document.getElementById('fieldUser');
+  const fieldPass     = document.getElementById('fieldPass');
+
+  /* ── Toggle password ───────────────────────────── */
+  let pwVisible = false;
+  togglePw.addEventListener('click', () => {
+    pwVisible = !pwVisible;
+    pwInput.type = pwVisible ? 'text' : 'password';
+    togglePw.querySelector('svg').innerHTML = pwVisible
+      ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+      : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  });
+
+  /* ── Clear errors on input ─────────────────────── */
+  userInput.addEventListener('input', () => fieldUser.classList.remove('error'));
+  pwInput.addEventListener('input',   () => fieldPass.classList.remove('error'));
+
+  /* ── Show toast ────────────────────────────────── */
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  /* ── Submit ────────────────────────────────────── */
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    const u = userInput.value.trim();
+    const p = pwInput.value;
+
+    if (!u) { fieldUser.classList.add('error'); valid = false; }
+    if (!p) { fieldPass.classList.add('error'); valid = false; }
+    if (!valid) return;
+
+    // Loading
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    await new Promise(r => setTimeout(r, 1200));
+
+    const ok = CREDENTIALS.some(c => c.user === u && c.pass === p);
+
+    if (ok) {
+      submitBtn.classList.remove('loading');
+      successOverlay.classList.add('show');
+      setTimeout(() => { window.location.href = REDIRECT_URL; }, 2000);
+    } else {
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+      fieldUser.classList.add('error');
+      fieldPass.classList.add('error');
+      showToast('Usuario o contraseña incorrectos');
+
+      // Shake the card
+      const card = document.getElementById('card');
+      card.style.animation = 'none';
+      requestAnimationFrame(() => {
+        card.style.animation = 'card-shake 0.45s ease';
+      });
+    }
+  });
+</script>
+
+<style>
+  @keyframes card-shake {
+    0%,100% { transform: translateX(0); }
+    20%      { transform: translateX(-8px); }
+    40%      { transform: translateX(8px); }
+    60%      { transform: translateX(-6px); }
+    80%      { transform: translateX(6px); }
+  }
+</style>
+</body>
+</html>

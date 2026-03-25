@@ -5,7 +5,7 @@
       <div class="company-info">
         <h3 class="company-title">Soinsolar S.A.S</h3>
         <p class="company-description">
-          Es una empresa colombiana especializada en el diseño, suministro, instalación y asesoría de sistemas de energía solar, comprometida con la sostenibilidad y el cuidado del medio ambiente.
+          Es una empresa colombiana especializada en el diseño, suministro, instalación y asesoría de sistemas de energía solar, con más de 10 años de experiencia, comprometida con la sostenibilidad y el cuidado del medio ambiente. Contamos con certificación ISO 9001 en gestión de calidad, lo que garantiza altos estándares en nuestros procesos, productos y servicios.
         </p>
         <p class="company-description">
           A continuación, presentamos nuestra propuesta de cotización para sistemas solares fotovoltaicos conectados a la red (On-Grid), orientada a optimizar el consumo energético y reducir los costos en la factura eléctrica.
@@ -104,9 +104,9 @@
 }
 
 .company-info {
-  text-align: justify;
+  text-align: center;
   font-family: Montserrat, sans-serif;
-  padding: 20px 20px 20px 40px;
+  padding: 15px;
   border-radius: 0;
   box-shadow: none;
   position: relative;
@@ -118,22 +118,22 @@
   align-items: center;
   height: 100%;
   margin: 0;
-  column-count: 2;
-  column-gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .company-title {
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 900;
   color: #ffffff;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
   font-family: Montserrat, sans-serif;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .company-description {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   line-height: 1.9;
   color: #ffffff;
   font-weight: 500;

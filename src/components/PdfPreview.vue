@@ -1,154 +1,164 @@
 <template>
-  <div class="pdf-preview">
-    <h3>Cotización Solar</h3>
-    <div class="details">
-      <p>Consumo mensual: {{ cotizacionStore.consumo }} kWh</p>
-      <p>Radiación solar: {{ cotizacionStore.radiacion }} kWh/m²/día</p>
-      <p>Generación estimada: {{ cotizacionStore.generacion.toFixed(2) }} kW</p>
-      <p>Número de paneles (400W): {{ Math.ceil(cotizacionStore.generacion * 1000 / 400) }}</p>
-      <p>Capacidad total: {{ (Math.ceil(cotizacionStore.generacion * 1000 / 400) * 400 / 1000).toFixed(2) }} kW</p>
-      <p>Total a pagar: ${{ (Math.ceil(cotizacionStore.generacion * 1000 / 400) * 1000).toLocaleString() }}</p>
-    </div>
-    <button v-if="!isSharedLink" @click="generateClientLink" class="generate-link-btn">Generar Link para Cliente</button>
-    <div v-if="clientLink && !isSharedLink" class="link-section">
-      <p>Link para el cliente (copia y comparte):</p>
-      <input :value="clientLink" readonly class="link-input" />
-      <button @click="copyLink" class="copy-btn">Copiar Link</button>
-    </div>
+  <div>
+    <!-- Botón visible solo si NO es shared link -->
+    <button v-if="!isSharedLink" @click="imprimirPDF" class="pdf-btn">
+      🖨️ Descargar PDF
+    </button>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useCotizacionStore } from '../store/cotizacion.js'
 
-const cotizacionStore = useCotizacionStore()
-const clientLink = ref('')
 const isSharedLink = ref(false)
 
-const generateClientLink = () => {
-  const data = {
-    consumo: cotizacionStore.consumo,
-    radiacion: cotizacionStore.radiacion,
-    generacion: cotizacionStore.generacion
-  }
-  const encoded = encodeURIComponent(JSON.stringify(data))
-  clientLink.value = `${window.location.origin}/SoinCalc/?data=${encoded}`
-}
-
-const copyLink = () => {
-  navigator.clipboard.writeText(clientLink.value).then(() => {
-    alert('Link copiado al portapapeles')
-  }).catch(() => {
-    alert('Error al copiar. Copia manualmente.')
-  })
-}
-
 onMounted(() => {
-  // Generar el link automáticamente al cargar el componente
-  generateClientLink()
-
   const urlParams = new URLSearchParams(window.location.search)
   isSharedLink.value = urlParams.has('data')
-  if (urlParams.has('data')) {
-    // Datos ya cargados en App.vue, generar PDF automáticamente
-    setTimeout(() => {
-      generatePDF()
-    }, 1000) // Pequeño delay para asegurar que el componente esté renderizado
-  }
 })
 
-const generatePDF = () => {
-  import('jspdf').then((jsPDF) => {
-    import('html2canvas').then((html2canvas) => {
-      const element = document.querySelector('.pdf-preview')
-      html2canvas.default(element).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png')
-        const doc = new jsPDF.default()
-        const imgWidth = 210
-        const pageHeight = 295
-        const imgHeight = (canvas.height * imgWidth) / canvas.width
-        let heightLeft = imgHeight
-
-        let position = 0
-
-        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-        heightLeft -= pageHeight
-
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight
-          doc.addPage()
-          doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
-          heightLeft -= pageHeight
-        }
-
-        doc.save('cotizacion-solar.pdf')
-      })
-    })
-  })
+const imprimirPDF = () => {
+  window.print()
 }
 </script>
 
 <style scoped>
-.pdf-preview {
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: white;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.details {
-  margin-bottom: 20px;
-}
-
-.details p {
-  margin: 8px 0;
-  font-size: 16px;
-}
-
-.generate-link-btn {
-  background: #F5B027;
+.pdf-btn {
+  background: linear-gradient(135deg, #1e40af, #0891b2);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 24px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
-  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s ease;
 }
-
-.generate-link-btn:hover {
-  background: #E89B1C;
+.pdf-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.45);
 }
+</style>
 
-.link-section {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f9f9f9;
-  border-radius: 5px;
-}
+<!-- ═══════════════════════════════════════════════════════════════
+     CSS GLOBAL DE IMPRESIÓN — va fuera de <style scoped>
+     para que afecte toda la página al hacer window.print()
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+@media print {
 
-.link-input {
-  width: 100%;
-  padding: 8px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  font-size: 14px;
-}
+  /* ── Ocultar elementos que NO deben ir en el PDF ── */
+  .pdf-btn,
+  .share-options,
+  .share-btn,
+  button,
+  input,
+  .consumo-input,
+  .tarifa-input,
+  .auto-input,
+  .hbs-input,
+  .adicionales-input,
+  .pct-input,
+  .input-section,
+  .input-doble,
+  .input-group,
+  .section-title,
+  .section-title-sm,
+  .input-unit,
+  .input-hint,
+  .currency-symbol,
+  .currency-symbol-blue,
+  .no-data,
+  nav,
+  header,
+  footer,
+  .nav,
+  .navbar,
+  [class*="nav-"],
+  [class*="sidebar"],
+  [class*="menu"] {
+    display: none !important;
+  }
 
-.copy-btn {
-  background: #1f2c51;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 3px;
-  cursor: pointer;
-}
+  /* ── Reset página ── */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
 
-.copy-btn:hover {
-  background: #2d3f6e;
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    font-size: 12px;
+  }
+
+  /* ── Cada panel ocupa su propio espacio limpio ── */
+  .panel3,
+  .panel8,
+  [class*="panel"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 16px 0 !important;
+    padding: 16px !important;
+    box-shadow: none !important;
+    border-radius: 12px !important;
+  }
+
+  /* ── Chart.js: fijar altura para que se vea completo ── */
+  .chart-wrap,
+  canvas {
+    width: 100% !important;
+    height: 280px !important;
+    max-height: 280px !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* ── Tabla: no partir filas entre páginas ── */
+  .tabla-flujo,
+  .table-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* ── KPIs: grid de 2 columnas en impresión ── */
+  .kpi-grid,
+  .kpi-section {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* ── Ahorro card en impresión ── */
+  .result-card.ahorro-card {
+    padding: 16px !important;
+  }
+
+  /* ── Resultados: 2 columnas en impresión ── */
+  .results-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* ── Saltos de página explícitos entre secciones grandes ── */
+  .panel8 {
+    page-break-before: always;
+  }
+
+  /* ── Márgenes de página ── */
+  @page {
+    margin: 12mm 10mm;
+    size: A4 portrait;
+  }
 }
 </style>

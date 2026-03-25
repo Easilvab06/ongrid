@@ -90,7 +90,7 @@
             </div>
           </div>
           <div class="stage-label">Sol</div>
-          <div class="stage-desc">Luz solar</div>
+          <div class="stage-desc">Radiación solar</div>
         </div>
 
         <!-- CONEXIÓN 1 -->
@@ -337,7 +337,7 @@
     <div class="benefits-section">
       <div class="benefit-card">
         <div class="benefit-icon">💰</div>
-        <div class="benefit-text">Factura reducida</div>
+<div class="benefit-text">Ahorro garantizado</div>
       </div>
       <div class="benefit-card">
         <div class="benefit-icon">🔄</div>
@@ -349,7 +349,7 @@
       </div>
       <div class="benefit-card">
         <div class="benefit-icon">🌍</div>
-        <div class="benefit-text">Energía limpia 24/7</div>
+        <div class="benefit-text">Energía limpia</div>
       </div>
     </div>
   </div>
@@ -371,7 +371,7 @@ const isDayMode = ref(true)
 .panel-conectado {
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%);
   border-radius: 24px;
-  padding: 40px;
+  padding: 64px;
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -508,14 +508,14 @@ const isDayMode = ref(true)
 }
 
 .stage-icon {
-  width: 90px;
-  height: 90px;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: white;
-  border-radius: 20px;
-  box-shadow: 
+  border-radius: 22px;
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.08),
     0 2px 4px rgba(0, 0, 0, 0.04);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -790,14 +790,14 @@ const isDayMode = ref(true)
   display: block;
 }
 
-/* DESTINOS */
-.flow-row-destinations {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 120px;
-  margin-top: 20px;
-}
+  /* DESTINOS */
+  .flow-row-destinations {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 120px;
+    margin-top: 20px;
+  }
 
 .destination-stage .stage-icon {
   width: 100px;
@@ -1113,13 +1113,186 @@ const isDayMode = ref(true)
 }
 
 /* RESPONSIVE */
+@media (max-width: 1200px) {
+  .panel-conectado {
+    padding: 32px;
+  }
+
+  .panel-title {
+    font-size: 24px;
+  }
+
+  .benefits-section {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .flow-row-destinations {
+    gap: 100px;
+  }
+}
+
 @media (max-width: 1024px) {
+  .panel-conectado {
+    padding: 32px;
+  }
+
+  .panel-title {
+    font-size: 24px;
+  }
+
   .benefits-section {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .flow-row-destinations {
-    gap: 80px;
+    gap: 90px;
+  }
+
+  .stage-icon {
+    width: 85px;
+    height: 85px;
+  }
+
+  .destination-stage .stage-icon {
+    width: 95px;
+    height: 95px;
+  }
+}
+
+@media (max-width: 768px) {
+  .panel-conectado {
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+
+  .panel-title {
+    font-size: 20px;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .panel-subtitle {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .info-panel-compact {
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    border-radius: 16px;
+  }
+
+  .info-title {
+    font-size: 16px;
+  }
+
+  .info-list li {
+    font-size: 14px;
+    padding-left: 24px;
+    line-height: 1.5;
+  }
+
+  .day-night-selector {
+    margin-bottom: 24px;
+    padding: 6px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .selector-btn {
+    padding: 12px 16px;
+    font-size: 13px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .selector-icon {
+    font-size: 18px;
+  }
+
+  .selector-text {
+    font-size: 12px;
+  }
+
+  /* Mantener flujo horizontal en móviles, ajustando tamaños */
+  .flow-row-horizontal {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .flow-connector {
+    width: 40px;
+    height: 4px;
+    margin: 0 4px;
+  }
+
+  .stage-icon {
+    width: 85px;
+    height: 85px;
+    border-radius: 18px;
+  }
+
+  .panel-icon, .inversor-icon {
+    width: 85px;
+    height: 85px;
+  }
+
+  .destination-stage .stage-icon {
+    width: 95px;
+    height: 95px;
+  }
+
+  .stage-label {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .stage-desc {
+    font-size: 11px;
+  }
+
+  .bifurcation-container {
+    max-width: 320px;
+    margin-bottom: 16px;
+    padding: 0 15px;
+  }
+
+  /* Eliminado flex-direction: column para mantener lado a lado */
+
+  .benefits-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .benefit-card {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+
+  .benefit-icon {
+    font-size: 26px;
+  }
+
+  .benefit-text {
+    font-size: 12px;
+  }
+}
+
+
+@media (max-width: 1024px) {
+  .flow-row-horizontal {
+    gap: 16px;
+  }
+
+  .stage-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .stage-label {
+    font-size: 13px;
   }
 }
 
@@ -1127,94 +1300,348 @@ const isDayMode = ref(true)
   .panel-conectado {
     padding: 28px 20px;
   }
-  
+
   .panel-title {
     font-size: 22px;
   }
-  
-  .panel-subtitle {
-    font-size: 14px;
-  }
-  
+
   .flow-row-horizontal {
-    flex-direction: column;
-    gap: 8px;
+    gap: 14px;
   }
-  
+
+  .stage-icon {
+    width: 75px;
+    height: 75px;
+  }
+
+  .bifurcation-container {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .panel-conectado {
+    padding: 20px 16px;
+  }
+
+  .panel-title {
+    font-size: 18px;
+  }
+
+  .panel-subtitle {
+    font-size: 13px;
+  }
+
+  .info-panel-compact {
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+
+  .day-night-selector {
+    margin-bottom: 24px;
+    width: 100%;
+  }
+
+  /* Mantener flujo horizontal en móviles, ajustando tamaños */
+  .flow-row-horizontal {
+    gap: 6px;
+    margin-bottom: 20px;
+    padding: 0 12px;
+  }
+
   .flow-connector {
-    width: 4px;
-    height: 50px;
-    transform: rotate(90deg);
+    width: 30px;
+    height: 4px;
+    margin: 0 3px;
   }
-  
+
   .stage-icon {
     width: 80px;
     height: 80px;
+    border-radius: 18px;
   }
-  
+
+  .panel-icon, .inversor-icon {
+    width: 80px;
+    height: 80px;
+  }
+
   .destination-stage .stage-icon {
     width: 90px;
     height: 90px;
   }
-  
-  .flow-row-destinations {
-    flex-direction: column;
-    gap: 40px;
+
+  .stage-label {
+    font-size: 16px;
+    font-weight: 700;
   }
-  
+
+  .stage-desc {
+    font-size: 14px;
+  }
+
   .bifurcation-container {
-    max-width: 300px;
+    max-width: 280px;
+    margin-bottom: 12px;
+    padding: 0 10px;
   }
-  
+
+  .flow-row-destinations {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
   .benefits-section {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+    margin-top: 20px;
   }
-  
-  .selector-btn {
-    padding: 10px 18px;
-    font-size: 13px;
+
+  .benefit-card {
+    padding: 14px;
   }
-  
-  .selector-icon {
-    font-size: 18px;
+
+  .benefit-icon {
+    font-size: 24px;
+  }
+
+  .benefit-text {
+    font-size: 11px;
   }
 }
 
 @media (max-width: 480px) {
   .panel-conectado {
-    padding: 20px 16px;
+    padding: 16px 12px;
+    border-radius: 12px;
   }
-  
+
   .panel-title {
-    font-size: 20px;
+    font-size: 16px;
+    line-height: 1.3;
   }
-  
+
+  .panel-subtitle {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .info-panel-compact {
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    border-radius: 12px;
+  }
+
+  .info-title {
+    font-size: 14px;
+  }
+
+  .info-list li {
+    font-size: 12px;
+    padding-left: 20px;
+    line-height: 1.5;
+  }
+
+  .day-night-selector {
+    margin-bottom: 16px;
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  .selector-btn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+
+  .selector-icon {
+    font-size: 14px;
+  }
+
+  .selector-text {
+    font-size: 10px;
+  }
+
+  .flow-row-horizontal {
+    gap: 12px 8px;
+    margin-bottom: 10px;
+  }
+
   .stage-icon {
     width: 70px;
     height: 70px;
+    border-radius: 14px;
   }
-  
+
+  .panel-icon, .inversor-icon {
+    width: 70px;
+    height: 70px;
+  }
+
   .destination-stage .stage-icon {
-    width: 80px;
-    height: 80px;
+    width: 75px;
+    height: 75px;
   }
-  
-  .day-night-selector {
-    flex-direction: column;
-    padding: 8px;
-    gap: 4px;
-    width: 100%;
+
+  .stage-label {
+    font-size: 11px;
+    font-weight: 600;
   }
-  
-  .selector-divider {
-    width: 100%;
-    height: 1px;
+
+  .stage-desc {
+    font-size: 9px;
   }
-  
-  .selector-btn {
-    width: 100%;
-    justify-content: center;
+
+  .bifurcation-container {
+    max-width: 220px;
+    margin-bottom: 10px;
+  }
+
+  /* Eliminado gap: 30px que causaba stacked */
+  @media (max-width: 480px) {
+    .flow-row-destinations {
+      gap: 20px;
+      margin-top: 10px;
+    }
+  }
+
+  .benefits-section {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .benefit-card {
+    padding: 12px;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .benefit-icon {
+    font-size: 22px;
+  }
+
+  .benefit-text {
+    font-size: 12px;
   }
 }
+
+
+@media (max-width: 360px) {
+  .panel-conectado {
+    padding: 14px 10px;
+    border-radius: 12px;
+  }
+
+  .panel-title {
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .panel-subtitle {
+    font-size: 11px;
+    margin-bottom: 14px;
+  }
+
+  .info-panel-compact {
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  .info-title {
+    font-size: 13px;
+  }
+
+  .info-list li {
+    font-size: 11px;
+    padding-left: 18px;
+    line-height: 1.4;
+  }
+
+  .day-night-selector {
+    margin-bottom: 14px;
+    padding: 3px;
+    border-radius: 8px;
+  }
+
+  .selector-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .selector-icon {
+    font-size: 13px;
+  }
+
+  .selector-text {
+    font-size: 9px;
+  }
+
+  .flow-row-horizontal {
+    gap: 10px 6px;
+    margin-bottom: 8px;
+  }
+
+  .stage-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 12px;
+  }
+
+  .panel-icon, .inversor-icon {
+    width: 58px;
+    height: 58px;
+  }
+
+  .destination-stage .stage-icon {
+    width: 68px;
+    height: 68px;
+  }
+
+  .stage-label {
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .stage-desc {
+    font-size: 8px;
+  }
+
+  .bifurcation-container {
+    max-width: 180px;
+    margin-bottom: 8px;
+  }
+
+  .flow-row-destinations {
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .benefits-section {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .benefit-card {
+    padding: 10px;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .benefit-icon {
+    font-size: 20px;
+  }
+
+  .benefit-text {
+    font-size: 11px;
+  }
+}
+
 </style>

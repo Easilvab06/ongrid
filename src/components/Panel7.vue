@@ -10,22 +10,30 @@
           <div class="top"></div>
           <div class="left side"></div>
           <div class="right side"></div>
+
+          <!-- Logo centrado en el polígono (visible en estado normal) -->
+          <div class="logo-center">
+            <div class="logo-wrapper">
+              <img src="@/assets/logo8.png" alt="Soinsolar" class="logo-svg" />
+            </div>
+          </div>
+
           <div class="title">Soinsolar</div>
           <div class="button-container">
             <button class="button instagram" @click="openSocial('instagram')">
-              <svg class="svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg class="svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                 <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
               </svg>
             </button>
             <button class="button facebook" @click="openSocial('facebook')">
-              <svg class="svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none">
+              <svg class="svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="none">
                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
               </svg>
             </button>
             <button class="button Whatsapp" @click="openSocial('Whatsapp')">
-              <svg class="svg" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="none">
+              <svg class="svg" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="none">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
               </svg>
             </button>
@@ -33,9 +41,9 @@
         </div>
       </div>
 
-      <!-- Botón Contáctanos -->
+      <!-- Botón Añadir información -->
       <button v-if="!isSharedLink" class="contact-button" @click="showContactForm = true">
-        Contáctanos
+        Añadir información
       </button>
 
       <!-- Botón Nuestros Proyectos -->
@@ -68,6 +76,14 @@
                   <label class="gold-form-label" for="city">Ciudad</label>
                   <input class="gold-form-input" type="text" id="city" v-model="formData.city" required />
                 </div>
+                <div class="gold-form-group">
+                  <label class="gold-form-label" for="sistema">Sistema deseado</label>
+                  <select class="gold-form-input" id="sistema" v-model="formData.sistema" required>
+                    <option value="">Seleccionar...</option>
+                    <option value="inyeccion-red">Inyección a red</option>
+                    <option value="hibrido">Híbrido</option>
+                  </select>
+                </div>
               </div>
 
               <!-- 2. Información de consumo eléctrico -->
@@ -87,24 +103,19 @@
                 </div>
                 <div v-if="formData.factura === 'si'" class="gold-form-group">
                   <label class="gold-form-label" for="factura-file">Adjuntar factura de energía</label>
-                  <input 
-                    class="gold-form-input" 
-                    type="file" 
-                    id="factura-file" 
+                  <input
+                    class="gold-form-input"
+                    type="file"
+                    id="factura-file"
                     ref="fileInput"
-                    accept=".pdf,.jpg,.jpeg,.png" 
-                    @change="handleFileChange" 
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    @change="handleFileChange"
                   />
                   <p class="file-hint">Formatos aceptados: PDF, JPG, JPEG, PNG - Maximo 5MB</p>
-                  
-                  <!-- Vista previa para imágenes y PDFs -->
+
                   <div v-if="imagePreview || formData.facturaFile" class="image-preview-container">
                     <p class="preview-label">{{ imagePreview ? 'Vista previa:' : 'Archivo cargado:' }}</p>
-                    
-                    <!-- Vista previa de imagen -->
                     <img v-if="imagePreview" :src="imagePreview" alt="Vista previa" class="image-preview" />
-                    
-                    <!-- Icono para PDF -->
                     <div v-if="!imagePreview && formData.facturaFile" class="pdf-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -114,16 +125,8 @@
                         <polyline points="10 9 9 9 8 9"></polyline>
                       </svg>
                     </div>
-                    
                     <p class="file-info">Archivo: {{ fileName }} - {{ fileSize }}</p>
-                    
-                    <!-- Botón de descarga directa -->
-                    <button 
-                      type="button" 
-                      class="download-button" 
-                      @click="downloadFile"
-                      title="Descargar archivo para enviar por WhatsApp"
-                    >
+                    <button type="button" class="download-button" @click="downloadFile" title="Descargar archivo para enviar por WhatsApp">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>
@@ -186,9 +189,7 @@
                 </div>
               </div>
 
-
-
-              <!-- 5. Autorizaciones -->
+              <!-- 4. Autorizaciones -->
               <div class="form-section">
                 <h3 class="section-title">📄 Autorizaciones</h3>
                 <div class="gold-form-group checkbox-group">
@@ -211,12 +212,10 @@
                 {{ isSubmitting ? 'Enviando...' : 'Enviar' }}
               </button>
 
-              <!-- Botón para exportar a Excel -->
               <button class="excel-export-button" type="button" @click="exportToExcel" :disabled="isExporting">
                 {{ isExporting ? 'Exportando...' : '📊 Exportar a Excel' }}
               </button>
 
-              <!-- Botón para limpiar registros -->
               <button class="clear-records-button" type="button" @click="clearRecords" :disabled="isClearing">
                 {{ isClearing ? 'Limpiando...' : '🗑️ Limpiar Registros' }}
               </button>
@@ -225,32 +224,115 @@
         </div>
       </div>
     </div>
+
+    <!-- ══ TARJETA ASESOR — visible SOLO en enlace compartido ══════════════ -->
+    <div v-if="isSharedLink && advisorName" class="advisor-card">
+      <div class="advisor-inner">
+        <div class="advisor-photo-ring">
+          <img v-if="advisorPhoto" :src="advisorPhoto" :alt="advisorName" class="advisor-photo" />
+          <div v-else class="advisor-photo advisor-photo-placeholder">
+            {{ advisorName.charAt(0).toUpperCase() }}
+          </div>
+          <div class="advisor-verified">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+        </div>
+        <div class="advisor-text">
+          <span class="advisor-label">Tu asesor Soinsolar</span>
+          <span class="advisor-name">{{ advisorName }}</span>
+          <span class="advisor-role">{{ advisorRole }}</span>
+        </div>
+        <div class="advisor-deco"></div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import * as XLSX from 'xlsx'
 import { useCotizacionStore } from '../store/cotizacion.js'
 
+// ── Fotos cargadas dinámicamente — no rompe si falta algún archivo ───────────
+const allImages = import.meta.glob('@/assets/*.png', { eager: true, import: 'default' })
+const getAsset = (filename) => {
+  const key = Object.keys(allImages).find(k => k.endsWith('/' + filename))
+  return key ? allImages[key] : null
+}
+
+const ADVISOR_PHOTOS = {
+  mauricio:      () => getAsset('mauricio.png'),
+  juan:          () => getAsset('juan.png'),
+  juansebastian: () => getAsset('juan.png'),
+  wilson:        () => getAsset('wilson.png'),
+  aldair:        () => getAsset('aldair.png'),
+  aladair:       () => getAsset('aldair.png'),
+}
+
+const ADVISOR_NAMES = {
+  mauricio:      'Mauricio',
+  juan:          'Juan',
+  juansebastian: 'Juan Sebastián',
+  wilson:        'Wilson',
+  aldair:        'Aldair',
+  aladair:       'Aldair',
+  santiago:      'Santiago',
+  mario:         'Mario',
+}
+
+// ── Roles por asesor — Wilson: Director Comercial, resto: Ing. Comercial ─────
+const ADVISOR_ROLES = {
+  wilson: '🏢 Director Comercial',
+}
+
+const DEFAULT_ROLE = '📐 Ing. Comercial'
+
 const showContactForm = ref(false)
-const isSubmitting = ref(false)
-const isExporting = ref(false)
-const isClearing = ref(false)
-const imagePreview = ref(null)
-const fileName = ref('')
-const fileSize = ref('')
-const fileInput = ref(null)
-const isSharedLink = ref(false)
+const isSubmitting    = ref(false)
+const isExporting     = ref(false)
+const isClearing      = ref(false)
+const imagePreview    = ref(null)
+const fileName        = ref('')
+const fileSize        = ref('')
+const fileInput       = ref(null)
+const isSharedLink    = ref(false)
+
+// Campo exclusivo para el asesor — separado del userName del cliente
+const advisorKey = ref('')
 
 const cotizacionStore = useCotizacionStore()
 
+const advisorPhoto = computed(() => {
+  const key = advisorKey.value.toLowerCase()
+  const fn = ADVISOR_PHOTOS[key]
+  return fn ? fn() : null
+})
+
+const advisorName = computed(() => {
+  const key = advisorKey.value.toLowerCase()
+  return ADVISOR_NAMES[key] || advisorKey.value || ''
+})
+
+// ── Rol dinámico según el asesor ─────────────────────────────────────────────
+const advisorRole = computed(() => {
+  const key = advisorKey.value.toLowerCase()
+  return ADVISOR_ROLES[key] ?? DEFAULT_ROLE
+})
+
 onMounted(() => {
   cotizacionStore.cargarRegistros()
-
-  // Check if this is a shared link (has 'data' parameter)
   const urlParams = new URLSearchParams(window.location.search)
   isSharedLink.value = urlParams.has('data')
+  if (urlParams.has('data')) {
+    try {
+      const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      // advisorName viene del campo dedicado al asesor, nunca del nombre del cliente
+      advisorKey.value = data.advisorName || ''
+    } catch (_) {}
+  }
 })
 
 const formData = ref({
@@ -269,6 +351,7 @@ const formData = ref({
   calibreAcometida: '',
   transformador: '',
   numeroMatricula: '',
+  sistema: '',
   politica: false,
   contacto: false
 })
@@ -305,7 +388,6 @@ const downloadFile = () => {
     link.click()
     document.body.removeChild(link)
     URL.revokeObjectURL(url)
-    
     const fileType = file.type.startsWith('image/') ? 'Imagen' : 'PDF'
     alert(`${fileType} descargado! Ahora puedes enviarla por WhatsApp manualmente.`)
   }
@@ -313,87 +395,47 @@ const downloadFile = () => {
 
 const handleFileChange = async (event) => {
   const file = event.target.files[0]
-  
   if (!file) {
-    imagePreview.value = null
-    fileName.value = ''
-    fileSize.value = ''
-    formData.value.facturaFile = null
-    formData.value.facturaBase64 = null
+    imagePreview.value = null; fileName.value = ''; fileSize.value = ''
+    formData.value.facturaFile = null; formData.value.facturaBase64 = null
     return
   }
-
-  // Validar tamaño del archivo (5MB máximo)
   if (file.size > 5 * 1024 * 1024) {
     alert('ERROR: El archivo es demasiado grande. Maximo 5MB.')
-    event.target.value = ''
-    imagePreview.value = null
-    fileName.value = ''
-    fileSize.value = ''
-    formData.value.facturaFile = null
-    formData.value.facturaBase64 = null
+    event.target.value = ''; imagePreview.value = null; fileName.value = ''; fileSize.value = ''
+    formData.value.facturaFile = null; formData.value.facturaBase64 = null
     return
   }
-
-  // Validar tipo de archivo
   const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
   if (!allowedTypes.includes(file.type)) {
     alert('ERROR: Tipo de archivo no permitido. Solo se aceptan PDF, JPG, JPEG y PNG.')
-    event.target.value = ''
-    imagePreview.value = null
-    fileName.value = ''
-    fileSize.value = ''
-    formData.value.facturaFile = null
-    formData.value.facturaBase64 = null
+    event.target.value = ''; imagePreview.value = null; fileName.value = ''; fileSize.value = ''
+    formData.value.facturaFile = null; formData.value.facturaBase64 = null
     return
   }
-
   try {
-    // Guardar información del archivo
     fileName.value = file.name
     fileSize.value = formatFileSize(file.size)
     formData.value.facturaFile = file
-
-    // Convertir a base64 para vista previa (solo para imágenes)
     if (file.type.startsWith('image/')) {
       const reader = new FileReader()
-      
-      reader.onload = (e) => {
-        imagePreview.value = e.target.result
-        formData.value.facturaBase64 = e.target.result
-        console.log('Imagen cargada exitosamente')
-      }
-      
-      reader.onerror = (error) => {
-        console.error('Error al leer el archivo:', error)
-        alert('ERROR: Error al cargar la imagen. Intentalo de nuevo.')
-      }
-      
+      reader.onload = (e) => { imagePreview.value = e.target.result; formData.value.facturaBase64 = e.target.result }
+      reader.onerror = () => alert('ERROR: Error al cargar la imagen. Intentalo de nuevo.')
       reader.readAsDataURL(file)
     } else if (file.type === 'application/pdf') {
-      // Para PDFs, solo guardamos el archivo sin vista previa
-      imagePreview.value = null
-      formData.value.facturaBase64 = null
-      console.log('PDF cargado exitosamente')
+      imagePreview.value = null; formData.value.facturaBase64 = null
     }
-
   } catch (error) {
     console.error('Error al procesar el archivo:', error)
     alert('ERROR: Error al cargar el archivo. Intentalo de nuevo.')
-    event.target.value = ''
-    imagePreview.value = null
-    fileName.value = ''
-    fileSize.value = ''
-    formData.value.facturaFile = null
-    formData.value.facturaBase64 = null
+    event.target.value = ''; imagePreview.value = null; fileName.value = ''; fileSize.value = ''
+    formData.value.facturaFile = null; formData.value.facturaBase64 = null
   }
 }
 
 const handleFormSubmit = async () => {
   isSubmitting.value = true
-
   try {
-    // Crear mensaje formateado para WhatsApp (sin caracteres especiales problemáticos)
     let mensaje = `*NUEVA SOLICITUD SOINSOLAR*
 
 *DATOS DEL CLIENTE*
@@ -408,12 +450,8 @@ Ciudad: ${formData.value.city}
 Consumo mensual: ${formData.value.consumo} kWh
 Factura disponible: ${formData.value.factura}`.trim()
 
-    // Agregar información de la factura si existe
     if (formData.value.facturaFile) {
-      mensaje += `
-Archivo adjunto: ${fileName.value} (${fileSize.value})
-
-*NOTA IMPORTANTE:* El cliente adjunto una factura de energia.`
+      mensaje += `\nArchivo adjunto: ${fileName.value} (${fileSize.value})\n\n*NOTA IMPORTANTE:* El cliente adjunto una factura de energia.`
     }
 
     mensaje += `
@@ -423,95 +461,44 @@ Archivo adjunto: ${fileName.value} (${fileSize.value})
 Tipo: ${formData.value.tipoInmueble}
 Tipo de techo: ${formData.value.tipoTecho}
 Area disponible: ${formData.value.area} m2
-
-
+Sistema deseado: ${formData.value.sistema}
 
 Fecha: ${new Date().toLocaleDateString('es-CO')}
 Hora: ${new Date().toLocaleTimeString('es-CO')}`
 
-    // Enviar mensaje por WhatsApp al nuevo número
-    const numeroWhatsApp = '573163799455'
-    const mensajeCodificado = encodeURIComponent(mensaje)
-    const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeCodificado}`
-    
-    // Guardar registro en el store
     const registro = {
-      name: formData.value.name,
-      email: formData.value.email,
-      phone: formData.value.phone,
-      city: formData.value.city,
-      consumo: formData.value.consumo,
-      factura: formData.value.factura,
-      tipoInmueble: formData.value.tipoInmueble,
-      tipoTecho: formData.value.tipoTecho,
-      area: formData.value.area,
-      tipoAcometida: formData.value.tipoAcometida,
-      calibreAcometida: formData.value.calibreAcometida,
-      transformador: formData.value.transformador,
-      numeroMatricula: formData.value.numeroMatricula,
-      politica: formData.value.politica,
-      contacto: formData.value.contacto
+      name: formData.value.name, email: formData.value.email, phone: formData.value.phone,
+      city: formData.value.city, consumo: formData.value.consumo, factura: formData.value.factura,
+      tipoInmueble: formData.value.tipoInmueble, tipoTecho: formData.value.tipoTecho,
+      area: formData.value.area, tipoAcometida: formData.value.tipoAcometida,
+      calibreAcometida: formData.value.calibreAcometida, transformador: formData.value.transformador,
+      numeroMatricula: formData.value.numeroMatricula, sistema: formData.value.sistema,
+      politica: formData.value.politica, contacto: formData.value.contacto
     }
-
     cotizacionStore.guardarRegistro(registro)
 
-    // Abrir WhatsApp
+    const urlWhatsApp = `https://wa.me/573163799455?text=${encodeURIComponent(mensaje)}`
     window.open(urlWhatsApp, '_blank')
 
-    // Mostrar mensaje de éxito con instrucciones
     setTimeout(() => {
       let mensajeExito = 'PERFECTO! WhatsApp se ha abierto con tu informacion.\n\n'
-      
       if (formData.value.facturaFile) {
         const fileType = formData.value.facturaFile.type.startsWith('image/') ? 'imagen' : 'PDF'
-        mensajeExito += `IMPORTANTE: Para enviar la factura:\n`
-        mensajeExito += `1. Descarga el archivo usando el boton "Descargar ${fileType.toUpperCase()}"\n`
-        mensajeExito += `2. En WhatsApp, adjunta el archivo descargado\n\n`
+        mensajeExito += `IMPORTANTE: Para enviar la factura:\n1. Descarga el archivo usando el boton "Descargar ${fileType.toUpperCase()}"\n2. En WhatsApp, adjunta el archivo descargado\n\n`
       }
-      
-      mensajeExito += 'También puedes llamarnos al: ' + formData.value.phone + '\n\n'
       mensajeExito += 'Gracias por confiar en Soinsolar!'
-      
       alert(mensajeExito)
     }, 1500)
 
-    // Limpiar formulario
     formData.value = {
-      name: '',
-      email: '',
-      phone: '',
-      city: '',
-      consumo: '',
-      factura: '',
-      facturaFile: null,
-      facturaBase64: null,
-      tipoInmueble: '',
-      tipoTecho: '',
-      area: '',
-      sistema: '',
-      baterias: '',
-      cobertura: 100,
-      presupuesto: '',
-      tiempo: '',
-      politica: false,
-      contacto: false
+      name: '', email: '', phone: '', city: '', consumo: '', factura: '',
+      facturaFile: null, facturaBase64: null, tipoInmueble: '', tipoTecho: '',
+      area: '', tipoAcometida: '', calibreAcometida: '', transformador: '',
+      numeroMatricula: '', sistema: '', politica: false, contacto: false
     }
-
-    // Limpiar vista previa
-    imagePreview.value = null
-    fileName.value = ''
-    fileSize.value = ''
-    
-    // Limpiar input de archivo
-    if (fileInput.value) {
-      fileInput.value.value = ''
-    }
-
-    // Cerrar modal
-    setTimeout(() => {
-      showContactForm.value = false
-    }, 3000)
-
+    imagePreview.value = null; fileName.value = ''; fileSize.value = ''
+    if (fileInput.value) fileInput.value.value = ''
+    setTimeout(() => { showContactForm.value = false }, 3000)
   } catch (error) {
     console.error('Error:', error)
     alert('ERROR: Hubo un error. Por favor, intenta contactarnos directamente por WhatsApp al 3163799455')
@@ -522,79 +509,35 @@ Hora: ${new Date().toLocaleTimeString('es-CO')}`
 
 const exportToExcel = async () => {
   isExporting.value = true
-
   try {
-    // Verificar si hay datos en el formulario actual y guardarlos si es necesario
-    const formularioActual = formData.value
-    const tieneDatosBasicos = formularioActual.name && formularioActual.email && formularioActual.phone
-
-    if (tieneDatosBasicos) {
-      // Guardar el formulario actual en el store
-      const registroActual = {
-        name: formularioActual.name,
-        email: formularioActual.email,
-        phone: formularioActual.phone,
-        city: formularioActual.city,
-        consumo: formularioActual.consumo,
-        factura: formularioActual.factura,
-        tipoInmueble: formularioActual.tipoInmueble,
-        tipoTecho: formularioActual.tipoTecho,
-        area: formularioActual.area,
-        tipoAcometida: formularioActual.tipoAcometida,
-        calibreAcometida: formularioActual.calibreAcometida,
-        transformador: formularioActual.transformador,
-        numeroMatricula: formularioActual.numeroMatricula,
-        politica: formularioActual.politica,
-        contacto: formularioActual.contacto
-      }
-
-      cotizacionStore.guardarRegistro(registroActual)
+    const f = formData.value
+    if (f.name && f.email && f.phone) {
+      cotizacionStore.guardarRegistro({
+        name: f.name, email: f.email, phone: f.phone, city: f.city, consumo: f.consumo,
+        factura: f.factura, tipoInmueble: f.tipoInmueble, tipoTecho: f.tipoTecho,
+        area: f.area, tipoAcometida: f.tipoAcometida, calibreAcometida: f.calibreAcometida,
+        transformador: f.transformador, numeroMatricula: f.numeroMatricula,
+        sistema: f.sistema, politica: f.politica, contacto: f.contacto
+      })
     }
-
-    // Obtener todos los registros del store (ahora incluye el formulario actual si fue guardado)
-    const todosLosRegistros = cotizacionStore.obtenerRegistros()
-
-    if (todosLosRegistros.length === 0) {
-      alert('❌ No hay registros para exportar. Complete al menos un formulario primero.')
-      return
-    }
-
-    // Crear datos para Excel
-    const data = todosLosRegistros.map(registro => ({
-      'ID': registro.id,
-      'Nombre': registro.name,
-      'Email': registro.email,
-      'Teléfono': registro.phone,
-      'Ciudad': registro.city,
-      'Consumo mensual (kWh)': registro.consumo,
-      'Factura disponible': registro.factura,
-      'Tipo de inmueble': registro.tipoInmueble,
-      'Tipo de techo': registro.tipoTecho,
-      'Área disponible (m²)': registro.area,
-      'Tipo de acometida': registro.tipoAcometida || '',
-      'Calibre de acometida': registro.calibreAcometida || '',
-      'Transformador': registro.transformador || '',
-      'Número de matrícula': registro.numeroMatricula || '',
-      'Política de datos': registro.politica ? 'Sí' : 'No',
-      'Autorización de contacto': registro.contacto ? 'Sí' : 'No',
-      'Fecha de solicitud': new Date(registro.fecha).toLocaleDateString('es-CO'),
-      'Hora de solicitud': new Date(registro.fecha).toLocaleTimeString('es-CO')
+    const todos = cotizacionStore.obtenerRegistros()
+    if (todos.length === 0) { alert('❌ No hay registros para exportar.'); return }
+    const data = todos.map(r => ({
+      'ID': r.id, 'Nombre': r.name, 'Email': r.email, 'Teléfono': r.phone, 'Ciudad': r.city,
+      'Sistema deseado': r.sistema === 'inyeccion-red' ? 'Inyección a red' : r.sistema === 'hibrido' ? 'Híbrido' : r.sistema || '',
+      'Consumo mensual (kWh)': r.consumo, 'Factura disponible': r.factura,
+      'Tipo de inmueble': r.tipoInmueble, 'Tipo de techo': r.tipoTecho, 'Área disponible (m²)': r.area,
+      'Tipo de acometida': r.tipoAcometida || '', 'Calibre de acometida': r.calibreAcometida || '',
+      'Transformador': r.transformador || '', 'Número de matrícula': r.numeroMatricula || '',
+      'Política de datos': r.politica ? 'Sí' : 'No', 'Autorización de contacto': r.contacto ? 'Sí' : 'No',
+      'Fecha de solicitud': new Date(r.fecha).toLocaleDateString('es-CO'),
+      'Hora de solicitud': new Date(r.fecha).toLocaleTimeString('es-CO')
     }))
-
-    // Crear libro de Excel
     const ws = XLSX.utils.json_to_sheet(data)
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, 'Cotizaciones Solar')
-
-    // Generar archivo y descargar
-    const fileName = `cotizaciones_solar_todas_${new Date().toISOString().split('T')[0]}.xlsx`
-    XLSX.writeFile(wb, fileName)
-
-    const mensajeExito = tieneDatosBasicos
-      ? `✅ Archivo Excel exportado exitosamente! Se exportaron ${todosLosRegistros.length} registros (incluyendo el formulario actual guardado).`
-      : `✅ Archivo Excel exportado exitosamente! Se exportaron ${todosLosRegistros.length} registros.`
-
-    alert(mensajeExito)
+    XLSX.writeFile(wb, `cotizaciones_solar_${new Date().toISOString().split('T')[0]}.xlsx`)
+    alert(`✅ Archivo Excel exportado exitosamente! Se exportaron ${todos.length} registros.`)
   } catch (error) {
     console.error('Error al exportar Excel:', error)
     alert('❌ Error al exportar el archivo Excel. Inténtalo de nuevo.')
@@ -604,9 +547,8 @@ const exportToExcel = async () => {
 }
 
 const clearRecords = async () => {
-  if (confirm('¿Estás seguro de que quieres eliminar TODOS los registros almacenados? Esta acción no se puede deshacer.')) {
+  if (confirm('¿Estás seguro de que quieres eliminar TODOS los registros? Esta acción no se puede deshacer.')) {
     isClearing.value = true
-
     try {
       cotizacionStore.limpiarRegistros()
       alert('✅ Todos los registros han sido eliminados exitosamente.')
@@ -621,8 +563,65 @@ const clearRecords = async () => {
 </script>
 
 <style scoped>
+/* ── Logo centrado en el polígono ── */
+.logo-center {
+  position: absolute;
+  top: 42%;
+  left: 54%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  transition: all 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  pointer-events: none;
+}
 
-/* Estilos para vista previa de imagen y PDF */
+.logo-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-ring { display: none; }
+.ring1, .ring2, .ring3 { display: none; }
+
+.logo-svg {
+  position: relative;
+  z-index: 2;
+  width: 96px;
+  height: 96px;
+  display: block;
+  animation: powerPulse 2s ease-in-out infinite;
+  transition: all 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+@keyframes powerPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.social-card:hover .logo-center {
+  top: 14%;
+  transform: translate(-50%, 0);
+}
+
+.social-card:hover .logo-wrapper {
+  width: 64px;
+  height: 64px;
+}
+
+.social-card:hover .logo-svg {
+  width: 52px;
+  height: 52px;
+}
+
+.social-card:hover .ring1 { width: 58px;  height: 58px; }
+.social-card:hover .ring2 { width: 72px;  height: 72px; }
+.social-card:hover .ring3 { width: 86px;  height: 86px; }
+.social-card:hover .logo-bg-glow { width: 56px; height: 56px; }
+
+/* ── Preview ── */
 .image-preview-container {
   margin-top: 15px;
   padding: 15px;
@@ -658,16 +657,8 @@ const clearRecords = async () => {
   margin-bottom: 10px;
 }
 
-.pdf-icon svg {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.file-info {
-  font-size: 12px;
-  color: #1e293b;
-  font-weight: 600;
-  margin: 0 0 12px 0;
-}
+.file-info { font-size: 12px; color: #1e293b; font-weight: 600; margin: 0 0 12px 0; }
+.file-hint { font-size: 12px; color: #64748b; margin-top: 8px; font-style: italic; }
 
 .download-button {
   width: 100%;
@@ -686,35 +677,9 @@ const clearRecords = async () => {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
+.download-button:hover { background: linear-gradient(135deg, #059669, #047857); transform: translateY(-2px); }
 
-.download-button:hover {
-  background: linear-gradient(135deg, #059669, #047857);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-}
-
-.download-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-.download-button svg {
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-
-.file-hint {
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 8px;
-  font-style: italic;
-}
-
-/* Resto de estilos originales */
+/* ── Panel ── */
 .panel7 {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
   backdrop-filter: blur(20px);
@@ -739,7 +704,7 @@ const clearRecords = async () => {
 
 .panel7:hover {
   transform: translateY(-8px);
-  box-shadow: 
+  box-shadow:
     0 30px 80px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(245, 176, 39, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 1);
@@ -773,6 +738,7 @@ const clearRecords = async () => {
   font-weight: 500;
 }
 
+/* ── Social Card ── */
 .social-card {
   position: relative;
   height: 300px;
@@ -835,14 +801,8 @@ const clearRecords = async () => {
   transition: all 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) 1s;
 }
 
-.social-card .main .left {
-  left: 0;
-}
-
-.social-card .main .right {
-  right: 0;
-  transform: translateX(50%) scale(-1, 1);
-}
+.social-card .main .left { left: 0; }
+.social-card .main .right { right: 0; transform: translateX(50%) scale(-1, 1); }
 
 .social-card .main .title {
   position: absolute;
@@ -852,9 +812,10 @@ const clearRecords = async () => {
   font-weight: bold;
   font-size: 18px;
   opacity: 0;
-  z-index: -1;
+  z-index: 4;
   transition: all 0.2s ease-out 0s;
   color: #1e293b;
+  white-space: nowrap;
 }
 
 .social-card .main .button-container {
@@ -867,7 +828,7 @@ const clearRecords = async () => {
 .social-card .main .button-container .button {
   position: absolute;
   transform: translateX(-50%);
-  padding: 5px 10px;
+  padding: 8px 14px;
   -webkit-clip-path: polygon(0 0, 100% 0, 81% 100%, 21% 100%);
   clip-path: polygon(0 0, 100% 0, 81% 100%, 21% 100%);
   background: rgba(245, 176, 39, 0.9);
@@ -880,106 +841,44 @@ const clearRecords = async () => {
 }
 
 .social-card .main .button-container .button .svg {
-  width: 15px;
+  width: 20px;
+  height: 20px;
   transition: all 0.2s cubic-bezier(0.785, 0.135, 0.15, 0.86);
 }
 
-.social-card .main .button-container .button:nth-child(1) {
-  bottom: 300px;
-  transition-delay: 0.4s;
-}
+.social-card .main .button-container .button:nth-child(1) { bottom: 300px; transition-delay: 0.4s; }
+.social-card .main .button-container .button:nth-child(2) { bottom: 300px; transition-delay: 0.6s; }
+.social-card .main .button-container .button:nth-child(3) { bottom: 300px; transition-delay: 0.8s; }
 
-.social-card .main .button-container .button:nth-child(2) {
-  bottom: 300px;
-  transition-delay: 0.6s;
-}
+.social-card .main .button-container .button:hover .svg { transform: scale(1.2); }
+.social-card .main .button-container .button:active .svg { transform: scale(0.7); }
+.social-card .main .button-container .button.instagram:hover .svg { stroke: #8b5cf6; }
+.social-card .main .button-container .button.facebook:hover .svg { fill: #3b82f6; }
+.social-card .main .button-container .button.Whatsapp:hover .svg { fill: #25d366; }
 
-.social-card .main .button-container .button:nth-child(3) {
-  bottom: 300px;
-  transition-delay: 0.8s;
-}
+/* ── Hover states ── */
+.social-card:hover .main { transform: scale(1.1); }
+.social-card:hover .main .top { top: -50px; }
+.social-card:hover .main .left { left: -50px; transition: all 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.1s; }
+.social-card:hover .main .right { right: -50px; transition: all 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.1s; }
+.social-card:hover .main .title { opacity: 1; transition: all 0.2s ease-out 1.3s; }
+.social-card:hover .main .button-container .button:nth-child(1) { bottom: 110px; transition-delay: 0.8s; }
+.social-card:hover .main .button-container .button:nth-child(2) { bottom: 58px;  transition-delay: 0.6s; }
+.social-card:hover .main .button-container .button:nth-child(3) { bottom: 6px;   transition-delay: 0.4s; }
 
-.social-card .main .button-container .button:hover .svg {
-  transform: scale(1.2);
-}
-
-.social-card .main .button-container .button:active .svg {
-  transform: scale(0.7);
-}
-
-.social-card .main .button-container .button.instagram:hover .svg {
-  stroke: #8b5cf6;
-}
-
-.social-card .main .button-container .button.facebook:hover .svg {
-  fill: #3b82f6;
-}
-
-.social-card .main .button-container .button.Whatsapp:hover .svg {
-  fill: #25d366;
-}
-
-.social-card:hover .main {
-  transform: scale(1.1);
-}
-
-.social-card:hover .main .top {
-  top: -50px;
-}
-
-.social-card:hover .main .left {
-  left: -50px;
-  transition: all 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.1s;
-}
-
-.social-card:hover .main .right {
-  right: -50px;
-  transition: all 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86) 0.1s;
-}
-
-.social-card:hover .main .title {
-  opacity: 1;
-  transition: all 0.2s ease-out 1.3s;
-}
-
-.social-card:hover .main .button-container .button:nth-child(1) {
-  bottom: 80px;
-  transition-delay: 0.8s;
-}
-
-.social-card:hover .main .button-container .button:nth-child(2) {
-  bottom: 40px;
-  transition-delay: 0.6s;
-}
-
-.social-card:hover .main .button-container .button:nth-child(3) {
-  bottom: 0;
-  transition-delay: 0.4s;
-}
-
+/* ── Keyframes ── */
 @keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
+/* ── Buttons ── */
 .contact-button {
   position: absolute;
   bottom: 20px;
@@ -997,10 +896,7 @@ const clearRecords = async () => {
   z-index: 10;
 }
 
-.contact-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 176, 39, 0.6);
-}
+.contact-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 176, 39, 0.6); }
 
 .proyectos-button {
   position: absolute;
@@ -1019,17 +915,24 @@ const clearRecords = async () => {
   z-index: 10;
 }
 
-.proyectos-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 176, 39, 0.6);
+.proyectos-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 176, 39, 0.6); }
+
+@media (max-width: 768px) {
+  .panel-title { font-size: 28px; }
+  .panel-subtitle { font-size: 16px; }
+  .contact-button, .proyectos-button {
+    position: relative; bottom: auto; left: auto; right: auto;
+    transform: none; margin-top: 40px; display: block;
+    width: fit-content; margin-left: auto; margin-right: auto;
+  }
+  .proyectos-button { margin-bottom: 20px; }
 }
 
+/* ── Form overlay ── */
 .contact-form-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
@@ -1051,18 +954,13 @@ const clearRecords = async () => {
 
 .close-button {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 20px; right: 20px;
   background: #ffffff;
   border: 4px solid #F5B027;
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  font-weight: bold;
+  width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: bold;
   cursor: pointer;
   color: #F5B027;
   z-index: 10001;
@@ -1072,26 +970,17 @@ const clearRecords = async () => {
 }
 
 .close-button:hover {
-  background: #F5B027;
-  color: white;
-  border-color: #F5B027;
-  transform: scale(1.2);
-  box-shadow: 0 8px 25px rgba(245, 176, 39, 0.6);
-  animation: none;
+  background: #F5B027; color: white; border-color: #F5B027;
+  transform: scale(1.2); animation: none;
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
+  0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
 }
 
-.gold-form-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-}
+/* ── Gold Form ── */
+.gold-form-container { display: flex; justify-content: center; align-items: center; padding: 10px; }
 
 .gold-form {
   width: 100%;
@@ -1104,431 +993,164 @@ const clearRecords = async () => {
     0 15px 35px rgba(139, 90, 43, 0.2),
     inset 0 2px 10px rgba(255, 255, 255, 0.3),
     inset 0 -2px 10px rgba(139, 90, 43, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  position: relative;
-  overflow: hidden;
+  display: flex; flex-direction: column; gap: 30px;
+  position: relative; overflow: hidden;
 }
 
 .gold-form::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
+  top: 0; left: 0; right: 0; height: 4px;
   background: linear-gradient(90deg, #1f2c51, #F5B027, #1f2c51);
   border-radius: 24px 24px 0 0;
 }
 
 .form-section {
   border-bottom: 2px solid rgba(255, 255, 255, 0.4);
-  padding-bottom: 25px;
-  margin-bottom: 25px;
-  position: relative;
+  padding-bottom: 25px; margin-bottom: 25px; position: relative;
 }
-
-.form-section:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
+.form-section:last-child { border-bottom: none; margin-bottom: 0; }
 .form-section::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, #1f2c51, #F5B027);
-  border-radius: 1px;
+  content: ''; position: absolute; bottom: -1px; left: 0;
+  width: 60px; height: 2px;
+  background: linear-gradient(90deg, #1f2c51, #F5B027); border-radius: 1px;
 }
 
 .section-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: #1e293b;
-  margin: 0 0 20px 0;
-  text-align: left;
-  letter-spacing: -0.5px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  font-size: 18px; font-weight: 800; color: #1e293b;
+  margin: 0 0 20px 0; text-align: left; letter-spacing: -0.5px;
+  display: flex; align-items: center; gap: 10px;
 }
 
-.checkbox-group {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
+.checkbox-group { display: flex; align-items: flex-start; gap: 12px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); }
+.checkbox-label { display: flex; align-items: flex-start; gap: 12px; font-size: 15px; color: #1e293b; font-weight: 600; cursor: pointer; position: relative; line-height: 1.5; flex: 1; }
+.checkbox-label input[type="checkbox"] { position: absolute; opacity: 0; cursor: pointer; }
+.checkmark { width: 24px; height: 24px; background: white; border: 3px solid #1e293b; border-radius: 6px; position: relative; transition: all 0.3s; flex-shrink: 0; margin-top: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.checkbox-label input[type="checkbox"]:checked + .checkmark { background: #10b981; border-color: #10b981; }
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after { content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 14px; font-weight: bold; }
 
-.checkbox-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 15px;
-  color: #1e293b;
-  font-weight: 600;
-  cursor: pointer;
-  position: relative;
-  line-height: 1.5;
-  flex: 1;
-}
+.gold-form-group { position: relative; margin-bottom: 20px; }
+.gold-form-label { display: block; color: #1e293b; font-size: 14px; font-weight: 700; margin-bottom: 10px; }
 
-.checkbox-label input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.checkmark {
-  width: 24px;
-  height: 24px;
-  background: white;
-  border: 3px solid #1e293b;
-  border-radius: 6px;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
-  margin-top: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.checkmark::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: #1f2c51;
-  border-radius: 2px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translate(-50%, -50%);
-}
-
-.checkbox-label input[type="checkbox"]:checked + .checkmark {
-  background: #10b981;
-  border-color: #10b981;
-  transform: scale(1.05);
-}
-
-.checkbox-label input[type="checkbox"]:checked + .checkmark::before {
-  width: 12px;
-  height: 12px;
-}
-
-.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  animation: checkmarkPulse 0.3s ease-out;
-}
-
-@keyframes checkmarkPulse {
-  0% { transform: translate(-50%, -50%) scale(0); }
-  50% { transform: translate(-50%, -50%) scale(1.2); }
-  100% { transform: translate(-50%, -50%) scale(1); }
-}
-
-.gold-form-group {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.gold-form-label {
-  display: block;
-  color: #1e293b;
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  text-transform: none;
-  letter-spacing: 0.3px;
-  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.gold-form-input,
-.gold-form-textarea,
-.gold-form select {
-  width: 100%;
-  padding: 16px 18px;
+.gold-form-input {
+  width: 100%; padding: 16px 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 16px;
-  color: #1e293b;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.1),
-    inset 0 1px 3px rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(10px);
+  border-radius: 14px; font-weight: 600; font-size: 16px; color: #1e293b;
+  transition: all 0.3s; box-sizing: border-box;
 }
 
-.gold-form-input::placeholder,
-.gold-form-textarea::placeholder {
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-.gold-form-textarea {
-  height: 100px;
-  resize: vertical;
-  min-height: 80px;
-}
-
-.gold-form select {
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 16px;
-  padding-right: 40px;
-  appearance: none;
-}
-
-.gold-form-input:focus,
-.gold-form-textarea:focus,
-.gold-form select:focus {
-  outline: none;
-  border-color: #10b981;
-  background: white;
-  box-shadow:
-    0 0 0 3px rgba(16, 185, 129, 0.1),
-    0 8px 20px rgba(0, 0, 0, 0.15),
-    inset 0 1px 3px rgba(255, 255, 255, 0.8);
+.gold-form-input:focus {
+  outline: none; border-color: #10b981; background: white;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1), 0 8px 20px rgba(0,0,0,0.15);
   transform: translateY(-1px);
-}
-
-.gold-form-input:focus + .gold-form-label,
-.gold-form-textarea:focus + .gold-form-label,
-.gold-form select:focus + .gold-form-label {
-  color: #1f2c51;
-  font-weight: 800;
 }
 
 .gold-form-button {
-  width: 100%;
-  padding: 18px 24px;
-  background: white;
-  border: 2px solid #1f2c51;
-  border-radius: 16px;
-  color: #1f2c51;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow:
-    0 8px 25px rgba(31, 44, 81, 0.2),
-    0 4px 15px rgba(31, 44, 81, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  width: 100%; padding: 18px 24px;
+  background: white; border: 2px solid #1f2c51; border-radius: 16px;
+  color: #1f2c51; font-size: 16px; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  transition: all 0.3s;
 }
+.gold-form-button:disabled { opacity: 0.6; cursor: not-allowed; }
+.gold-form-button:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(31,44,81,0.4); }
 
-.gold-form-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.excel-export-button {
+  width: 100%; padding: 18px 24px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: 2px solid #10b981; border-radius: 16px;
+  color: white; font-size: 16px; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.3s;
 }
+.excel-export-button:disabled { opacity: 0.6; cursor: not-allowed; }
+.excel-export-button:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(16,185,129,0.4); }
 
-.gold-form-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+.clear-records-button {
+  width: 100%; padding: 18px 24px;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  border: 2px solid #dc2626; border-radius: 16px;
+  color: white; font-size: 16px; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.3s;
 }
-
-.gold-form-button:hover:not(:disabled)::before {
-  left: 100%;
-}
-
-.gold-form-button:hover:not(:disabled) {
-  box-shadow:
-    0 12px 35px rgba(31, 44, 81, 0.4),
-    0 6px 20px rgba(31, 44, 81, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px);
-}
-
-.gold-form-button:active:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow:
-    0 4px 15px rgba(31, 44, 81, 0.3),
-    0 2px 10px rgba(31, 44, 81, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
-}
+.clear-records-button:disabled { opacity: 0.6; cursor: not-allowed; }
+.clear-records-button:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(220,38,38,0.4); }
 
 @media (max-width: 768px) {
-  .gold-form {
-    padding: 25px;
-    max-width: 100%;
-  }
-
-  .section-title {
-    font-size: 16px;
-  }
-
-  .gold-form-input,
-  .gold-form-textarea,
-  .gold-form select {
-    padding: 14px 16px;
-    font-size: 15px;
-  }
-
-  .gold-form-button {
-    padding: 16px 20px;
-    font-size: 15px;
-  }
-
-  .image-preview {
-    max-width: 100%;
-  }
-  
-  .pdf-icon {
-    padding: 15px;
-  }
-  
-  .pdf-icon svg {
-    width: 60px;
-    height: 60px;
-  }
+  .gold-form { padding: 25px; max-width: 100%; }
+  .section-title { font-size: 16px; }
+  .gold-form-input { padding: 14px 16px; font-size: 15px; }
+  .gold-form-button, .excel-export-button, .clear-records-button { padding: 16px 20px; font-size: 15px; }
+  .image-preview { max-width: 100%; }
 }
 
-/* Excel Export Button Styles */
-.excel-export-button {
-  width: 100%;
-  padding: 18px 24px;
-  background: linear-gradient(135deg, #10b981, #059669);
-  border: 2px solid #10b981;
-  border-radius: 16px;
-  color: white;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow:
-    0 8px 25px rgba(16, 185, 129, 0.2),
-    0 4px 15px rgba(16, 185, 129, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+/* ══ TARJETA ASESOR ══════════════════════════════════════════════════════════ */
+.advisor-card {
+  margin-top: 24px;
+  border-radius: 24px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  background: linear-gradient(135deg, #1a2444 0%, #253565 45%, #1a2444 100%);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.32), 0 0 0 1px rgba(245,176,39,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
+  animation: advisorIn 0.55s cubic-bezier(0.34,1.15,0.64,1) both;
 }
-
-.excel-export-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+@keyframes advisorIn {
+  from { opacity:0; transform: translateY(20px) scale(0.97); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
 }
-
-.excel-export-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+.advisor-inner {
+  display: flex; align-items: center; gap: 24px;
+  padding: 28px 32px; position: relative; overflow: hidden;
 }
-
-.excel-export-button:hover:not(:disabled)::before {
-  left: 100%;
+.advisor-deco {
+  position: absolute; right: -50px; top: 50%; transform: translateY(-50%);
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,176,39,0.14) 0%, transparent 68%);
+  pointer-events: none;
 }
-
-.excel-export-button:hover:not(:disabled) {
-  box-shadow:
-    0 12px 35px rgba(16, 185, 129, 0.4),
-    0 6px 20px rgba(16, 185, 129, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px);
+.advisor-photo-ring { position: relative; flex-shrink: 0; }
+.advisor-photo {
+  width: 88px; height: 88px; border-radius: 50%; object-fit: cover; display: block;
+  border: 3px solid #F5B027;
+  box-shadow: 0 0 0 6px rgba(245,176,39,0.18), 0 10px 28px rgba(0,0,0,0.45);
+  animation: photoPulse 3.5s ease-in-out infinite;
 }
-
-.excel-export-button:active:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow:
-    0 4px 15px rgba(16, 185, 129, 0.3),
-    0 2px 10px rgba(16, 185, 129, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+.advisor-photo-placeholder {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: linear-gradient(135deg, #F5B027, #e89b1c);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Montserrat', sans-serif; font-size: 36px; font-weight: 900; color: #1a2444;
 }
-
-/* Clear Records Button Styles */
-.clear-records-button {
-  width: 100%;
-  padding: 18px 24px;
-  background: linear-gradient(135deg, #dc2626, #b91c1c);
-  border: 2px solid #dc2626;
-  border-radius: 16px;
-  color: white;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  box-shadow:
-    0 8px 25px rgba(220, 38, 38, 0.2),
-    0 4px 15px rgba(220, 38, 38, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+@keyframes photoPulse {
+  0%,100% { box-shadow: 0 0 0 6px rgba(245,176,39,0.18), 0 10px 28px rgba(0,0,0,0.45); }
+  50%      { box-shadow: 0 0 0 11px rgba(245,176,39,0.10), 0 10px 34px rgba(0,0,0,0.55); }
 }
-
-.clear-records-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.advisor-verified {
+  position: absolute; bottom: 1px; right: 1px;
+  width: 27px; height: 27px; border-radius: 50%;
+  background: linear-gradient(135deg, #F5B027 0%, #e89b1c 100%);
+  display: flex; align-items: center; justify-content: center;
+  border: 2.5px solid #1a2444; box-shadow: 0 3px 10px rgba(0,0,0,0.40);
 }
-
-.clear-records-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+.advisor-text { display: flex; flex-direction: column; gap: 5px; z-index: 1; }
+.advisor-label {
+  font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase; color: #F5B027;
 }
-
-.clear-records-button:hover:not(:disabled)::before {
-  left: 100%;
+.advisor-name {
+  font-family: 'Montserrat', sans-serif; font-size: 26px; font-weight: 900;
+  color: #ffffff; letter-spacing: -0.5px; line-height: 1.1;
 }
-
-.clear-records-button:hover:not(:disabled) {
-  box-shadow:
-    0 12px 35px rgba(220, 38, 38, 0.4),
-    0 6px 20px rgba(220, 38, 38, 0.3),
-    inset 0 1px 3px rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px);
+.advisor-role {
+  font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500;
+  color: rgba(255,255,255,0.50);
 }
-
-.clear-records-button:active:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow:
-    0 4px 15px rgba(220, 38, 38, 0.3),
-    0 2px 10px rgba(220, 38, 38, 0.2),
-    inset 0 1px 3px rgba(255, 255, 255, 0.2);
+@media (max-width: 480px) {
+  .advisor-inner { padding: 20px 22px; gap: 18px; }
+  .advisor-photo, .advisor-photo-placeholder { width: 72px; height: 72px; }
+  .advisor-name { font-size: 21px; }
 }
 </style>
