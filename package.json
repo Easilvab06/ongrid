@@ -12,6 +12,7 @@
   "dependencies": {
     "chart.js": "^4.5.1",
     "fabric": "^7.1.0",
+    "firebase": "^12.11.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "npm": "^11.8.0",

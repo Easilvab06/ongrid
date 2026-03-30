@@ -399,16 +399,33 @@ const uploadToImgBB = async (base64) => {
 
 onMounted(() => {
   const urlParams = new URLSearchParams(window.location.search)
-  isSharedLink.value = urlParams.has('data')
+  const isNew = urlParams.has('d')
+  const isOld = urlParams.has('data')
+  isSharedLink.value = isNew || isOld
 
-  if (isSharedLink.value) {
+  if (isNew || isOld) {
     try {
-      const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
-      if (data.images && Array.isArray(data.images)) savedImages.value = data.images
-      else {
+      let data
+      if (isNew) {
+        const _fromB64 = (b64) => decodeURIComponent(escape(atob(b64)))
+        data = JSON.parse(_fromB64(urlParams.get('d')))
+      } else {
+        data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      }
+
+      // Cargar imágenes desde el payload del enlace
+      if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+        savedImages.value = data.images
+      } else {
+        // Fallback: buscar en localStorage por quoteId
         const quoteId = data.quoteId || cotizacionStore._quoteId
         const raw = localStorage.getItem(`images_${quoteId}`)
-        savedImages.value = raw ? JSON.parse(raw) : []
+        if (raw) savedImages.value = JSON.parse(raw)
+        else {
+          // Último fallback: sharedImages guardado por App.vue
+          const shared = localStorage.getItem('sharedImages')
+          if (shared) savedImages.value = JSON.parse(shared)
+        }
       }
     } catch (e) { savedImages.value = [] }
   } else {

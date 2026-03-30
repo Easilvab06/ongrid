@@ -325,10 +325,19 @@ const advisorRole = computed(() => {
 onMounted(() => {
   cotizacionStore.cargarRegistros()
   const urlParams = new URLSearchParams(window.location.search)
-  isSharedLink.value = urlParams.has('data')
-  if (urlParams.has('data')) {
+  const isNew = urlParams.has('d')
+  const isOld = urlParams.has('data')
+  isSharedLink.value = isNew || isOld
+
+  if (isNew || isOld) {
     try {
-      const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      let data
+      if (isNew) {
+        const _fromB64 = (b64) => decodeURIComponent(escape(atob(b64)))
+        data = JSON.parse(_fromB64(urlParams.get('d')))
+      } else {
+        data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      }
       // advisorName viene del campo dedicado al asesor, nunca del nombre del cliente
       advisorKey.value = data.advisorName || ''
     } catch (_) {}

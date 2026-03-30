@@ -259,12 +259,27 @@ const preciosExcel = [
 ]
 
 // ─── Recalcula costoTotal desde los parámetros de la URL ─────────────────────
+const _fromB64 = (b64) => decodeURIComponent(escape(atob(b64)))
+
 const calcularDesdeURL = () => {
   try {
     const urlParams = new URLSearchParams(window.location.search)
-    if (!urlParams.has('data')) return false
-    const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+    const isNew = urlParams.has('d')
+    const isOld = urlParams.has('data')
+    if (!isNew && !isOld) return false
 
+    const data = isNew
+      ? JSON.parse(_fromB64(urlParams.get('d')))
+      : JSON.parse(decodeURIComponent(urlParams.get('data')))
+
+    // ── Usar costoTotal y ahorroMes que Panel3 ya calculó correctamente ──────
+    // Si vienen en el payload (enlace nuevo), usarlos directamente sin recalcular
+    if (data.costoTotal > 0 && data.ahorroMes > 0) {
+      sincronizar(data.costoTotal, data.ahorroMes)
+      return true
+    }
+
+    // ── Fallback para enlaces viejos que no traen costoTotal/ahorroMes ────────
     const generacion   = data.generacion   || 0
     const hbsVal       = data.hbs          || 3.8
     const tarifaKwh    = data.tarifaKwh    || 0
@@ -272,11 +287,10 @@ const calcularDesdeURL = () => {
     const aluPublico   = data.aluPublico   || 0
     const autoconsumo  = data.autoconsumo  || 0
     const adicionales  = data.adicionales  || 0
-    const descuento    = data.descuento    || 0   // ← descuento desde URL
+    const descuento    = data.descuento    || 0
 
     if (!generacion) return false
 
-    // Buscar N paneles (igual que Panel3)
     let mejorN = 1, menorDif = Infinity
     for (let n = 1; n <= MAX_PANELES; n++) {
       const gen = Math.round(POTENCIA_PANEL_KWP * n * 30 * hbsVal * 100) / 100
@@ -284,12 +298,10 @@ const calcularDesdeURL = () => {
       if (dif < menorDif) { menorDif = dif; mejorN = n }
     }
 
-    const valorBase              = preciosExcel[mejorN - 1] || 0
+    const valorBase                = preciosExcel[mejorN - 1] || 0
     const valorTotalConAdicionales = valorBase + adicionales
-    // ← Aplicar descuento al costo total
-    const costoTotal = Math.round(valorTotalConAdicionales * (1 - descuento / 100))
+    const costoTotal               = Math.round(valorTotalConAdicionales * (1 - descuento / 100))
 
-    // Calcular ahorro mensual (igual que Panel3)
     const auto = autoconsumo / 100
     let ahorroMes = 0
     if (auto > 0 && generacion > 0 && tarifaKwh > 0) {
@@ -297,8 +309,6 @@ const calcularDesdeURL = () => {
       const K14 = generacion * (1 - auto) * (tarifaKwh - 200)
       ahorroMes = Math.round(J14 + K14)
     }
-
-    // Fallback: si no hay autoconsumo, usar consumo × tarifa como ahorro base
     const consumo = data.consumo || 0
     if (ahorroMes <= 0 && consumo > 0 && tarifaKwh > 0) {
       ahorroMes = Math.round(consumo * tarifaKwh)

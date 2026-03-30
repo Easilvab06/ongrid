@@ -49,10 +49,10 @@
         <Panel6 class="full-width"/>
         <Panel2 />
         <Panel9 class="full-width"/>
-        <Panel3 />
+        <Panel3 class="full-width" :is-shared-link="isSharedLink" />
         <Panel8 class="full-width"/>
-        <Panel4 class="full-width"/>
-        <Panel5/>
+        <Panel4 class="full-width" :is-shared-view="isSharedLink" />
+        <Panel5 :is-shared-link="isSharedLink"/>
         <Panel7 />
       </div>
 
@@ -91,7 +91,7 @@ const isPrinting      = ref(false)
 
 // ── Autenticación ──────────────────────────────────────────────────────────
 const urlParams    = new URLSearchParams(window.location.search)
-const isSharedLink = urlParams.has('data')
+const isSharedLink = urlParams.has('d') || urlParams.has('data')
 
 const isAuthenticated = ref(
   isSharedLink || sessionStorage.getItem('soinsolar_auth') === '1'
@@ -111,16 +111,33 @@ const exportToPdf = () => {
   }, 300)
 }
 
+// helpers btoa/atob seguros para Unicode
+const _fromB64 = (b64) => decodeURIComponent(escape(atob(b64)))
+
 // ── onMounted ──────────────────────────────────────────────────────────────
 onMounted(() => {
-  if (urlParams.has('data')) {
+  const cotizacionStore = useCotizacionStore()
+  
+  window.addEventListener('panel4-images-updated', (e) => {
+    cotizacionStore.updateStructureImages(e.detail.selectedImages)
+  })
+
+  const isNew = urlParams.has('d')
+  const isOld = urlParams.has('data')
+  if (isNew || isOld) {
     try {
-      const data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      let data
+      if (isNew) {
+        data = JSON.parse(_fromB64(urlParams.get('d')))
+      } else {
+        data = JSON.parse(decodeURIComponent(urlParams.get('data')))
+      }
+      // Guardar imágenes en localStorage para que Panel5 las encuentre
       if (data.images && Array.isArray(data.images) && data.images.length > 0) {
         localStorage.setItem('sharedImages', JSON.stringify(data.images))
-        console.log('Imágenes compartidas guardadas desde URL:', data.images.length)
-      } else {
-        console.log('No se encontraron imágenes en el enlace compartido')
+      }
+      if (data.structureImages) {
+        cotizacionStore.updateStructureImages(data.structureImages)
       }
     } catch (error) {
       console.error('Error loading data from URL:', error)

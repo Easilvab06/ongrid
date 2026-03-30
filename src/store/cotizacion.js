@@ -13,7 +13,9 @@ export const useCotizacionStore = defineStore('cotizacion', {
     costoTotal: 0,
     consumoCliente: 0,
     tarifaElectricidad: 1000,
-    incrementoAnual: 2
+    incrementoAnual: 2,
+    structureImages: [],
+    _quoteId: ''
   }),
 
   actions: {
@@ -41,6 +43,10 @@ export const useCotizacionStore = defineStore('cotizacion', {
 
     actualizarAdicionales(adicionales) {
       this.adicionales = adicionales
+    },
+
+    updateStructureImages(images) {
+      this.structureImages = images
     },
 
     // Cargar registros desde localStorage
@@ -133,3 +139,4 @@ export const useCotizacionStore = defineStore('cotizacion', {
     }
   }
 })
+

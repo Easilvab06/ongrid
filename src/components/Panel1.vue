@@ -81,9 +81,9 @@
       <div class="welcome-content">
         <div class="greeting-section">
           <h2 class="greeting-text">Bienvenido,</h2>
-          <div v-if="!isEditing" class="name-display" @click="startEditing">
+          <div v-if="!isEditing" class="name-display" @click="startEditing" :class="{ 'no-edit': isSharedLink }">
             <span class="user-name">{{ displayName }}</span>
-            <span class="edit-hint">✏️</span>
+            <span class="edit-hint" v-if="!isSharedLink">✏️</span>
           </div>
           <input 
             v-else
@@ -134,6 +134,9 @@ import { useCotizacionStore } from '../store/cotizacion.js'
 
 const cotizacionStore = useCotizacionStore()
 
+// Detectar si es enlace compartido (cliente no puede editar nombre)
+const isSharedLink = new URLSearchParams(window.location.search).has('d')
+
 // Estado del nombre del usuario
 const userName = computed({
   get: () => cotizacionStore.userName,
@@ -152,8 +155,9 @@ const displayName = computed(() => {
   return userName.value || 'Usuario'
 })
 
-// Función para iniciar edición
+// Función para iniciar edición (bloqueada para clientes con enlace compartido)
 const startEditing = () => {
+  if (isSharedLink) return
   isEditing.value = true
   nextTick(() => {
     nameInput.value?.focus()
@@ -286,6 +290,15 @@ onMounted(() => {
 .name-display:hover {
   background-color: rgba(254, 231, 205, 0.8);
   transform: translateX(4px);
+}
+
+.name-display.no-edit {
+  cursor: default;
+  pointer-events: none;
+}
+.name-display.no-edit:hover {
+  transform: none;
+  background-color: rgba(254, 231, 205, 0.5);
 }
 
 .user-name {

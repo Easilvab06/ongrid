@@ -171,16 +171,17 @@
 import { ref, reactive } from 'vue'
 
 const emit = defineEmits(['login-success'])
-
-const CREDENTIALS = [
-  { user: 'aldair',         pass: 'aldair2025'         },
-  { user: 'mauricio',       pass: 'mauricio2025'       },
-  { user: 'juansebastian',  pass: 'juansebastian2025'  },
-  { user: 'santiago',       pass: 'santiago2025'       },
-  { user: 'mario',          pass: 'mario2025'          },
-  { user: 'wilson',         pass: 'wilson2025'         },
-  { user: 'juan',           pass: 'juan2025'           },
-]
+  const CREDENTIALS = [
+    { user: 'aldair',          pass: 'aldair2025'         },
+    { user: 'mauricio',        pass: 'mauricio2025'       },
+    { user: 'juansebastian',   pass: 'juansebastian2025'  },
+    { user: 'santiago',        pass: 'santiago2025'       },
+    { user: 'mario',           pass: 'mario2025'          },
+    { user: 'wilson',          pass: 'wilson2025'         },
+    { user: 'juan',            pass: 'juan2025'           },
+    // ── Cuenta maestra ──────────────────────────────────
+    { user: 'administracion',  pass: 'AdminSoin2025'    },
+  ]
 
 const form = reactive({ user: '', pass: '', remember: false })
 const errors = reactive({ user: false, pass: false })
